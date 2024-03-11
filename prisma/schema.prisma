@@ -14,11 +14,121 @@ datasource db {
     relationMode = "prisma"
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
+model User {
+    id           String         @id @default(uuid())
+    firstName    String
+    lastName     String
+    email        String         @unique
+    avatar       String?
+    agencyId     String?
+    agency       Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+    permissions  Permission[]
+    Notification Notification[]
+    createdAt    DateTime       @default(now())
+    updatedAt    DateTime       @updatedAt
+
+    @@index([agencyId])
+}
+
+enum Plan {
+    BASIC
+    PRO
+    ENTERPRISE
+}
+
+model Agency {
+    id             String       @id @default(uuid())
+    name           String
+    logo           String?
+    email          String       @unique
+    phone          String
+    address        String
+    city           String
+    state          String
+    zip            String
+    country        String
+    users          User[]
+    plan           Plan
+    accounts       Account[]
+    createdAt      DateTime     @default(now())
+    updatedAt      DateTime     @updatedAt
+}
+
+model Contact {
+    id        String   @id @default(uuid())
+    firstName String
+    lastName  String
+    email     String   @unique
+    phone     String
+    address   String
+    city      String
+    state     String
+    zip       String
+    country   String
+    accountId String
+    account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    @@index([name])
+    @@index([accountId])
+}
+
+enum Stage {
+    LEAD
+    PROSPECT
+    PROPOSAL_SENT
+    CUSTOMER
+    PARTNER
+}
+
+model Account {
+    id            String       @id @default(uuid())
+    name          String
+    email         String       @unique
+    avatar        String?
+    eventDate     DateTime
+    eventLocation String
+    description   String
+    notes         String
+    agencyId      String
+    agency        Agency       @relation(fields: [agencyId], references: [id])
+    stage         Stage
+    contacts      Contact[]
+    permissions   Permission[]
+    createdAt     DateTime     @default(now())
+    updatedAt     DateTime     @updatedAt
+
+    @@index([agencyId])
+}
+
+enum Role {
+    ADMIN
+    USER
+    GUEST
+}
+
+model Permission {
+    id        String   @id @default(uuid())
+    userId    String
+    accountId String
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+    role      Role
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([userId])
+    @@index([accountId])
+}
+
+model Notification {
+    id        String   @id @default(uuid())
+    userId    String
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    message   String
+    read      Boolean  @default(false)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([userId, read])
 }

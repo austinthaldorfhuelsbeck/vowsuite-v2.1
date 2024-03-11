@@ -1,4 +1,4 @@
-import PageWrapper from "~/components/global/page-wrapper";
+import PageWrapper from "~/layouts/page-wrapper";
 import { api } from "~/utils/api";
 
 const Studio = () => {

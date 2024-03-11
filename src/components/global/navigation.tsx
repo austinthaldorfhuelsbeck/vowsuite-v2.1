@@ -2,11 +2,12 @@ import { UserButton, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { navigation } from "~/lib/constants";
+import { Button } from "../ui/button";
 
 const LoginButton = () => (
   <Link
     href="/studio"
-    className="hover:bg-primary/10 hover:text-primary my-auto rounded px-2 py-1 text-sm font-semibold transition-all"
+    className="my-auto rounded px-2 py-1 text-sm font-semibold transition-all hover:bg-primary/10 hover:text-primary"
   >
     Log in
   </Link>
@@ -36,11 +37,8 @@ const Navigation = () => {
           <ul className="flex items-center justify-center gap-6">
             {navigation.map((item, index) => (
               <li key={index}>
-                <Link
-                  href={item.href}
-                  className="hover:bg-primary/10 hover:text-primary rounded px-2 py-1 text-sm font-light transition-all"
-                >
-                  {item.title}
+                <Link href={item.href}>
+                  <Button variant="ghost">{item.title}</Button>
                 </Link>
               </li>
             ))}
@@ -52,8 +50,12 @@ const Navigation = () => {
         {isSignedIn && <UserButton />}{" "}
         {isLoaded && !isSignedIn && (
           <>
-            <LoginButton />
-            {/* <FreeTrialButton /> */}
+            <Link href="/studio">
+              <Button variant="ghost">Log in</Button>
+            </Link>
+            <Button className="border border-primary hover:bg-primary/20 hover:text-primary">
+              Start your free trial →
+            </Button>
           </>
         )}
       </aside>

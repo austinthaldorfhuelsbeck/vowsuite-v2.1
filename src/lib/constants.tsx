@@ -1,3 +1,18 @@
+import {
+  CircleFadingPlus,
+  ImageUp,
+  MessageSquareMore,
+  Share2,
+  ShieldCheck,
+  Wand,
+} from "lucide-react";
+
+export const navigation = [
+  { title: "Features", href: "#features" },
+  { title: "Pricing", href: "#pricing" },
+  { title: "Customers", href: "#testimonial" },
+];
+
 export const pricingPlans = [
   {
     priceId: "",
@@ -91,9 +106,48 @@ export const testimonials = [
   },
 ];
 
-// Navigation configuration
-export const navigation = [
-  { title: "Features", href: "#features" },
-  { title: "Pricing", href: "#pricing" },
-  { title: "Customers", href: "#testimonial" },
+export const visualFeaturesList = [
+  {
+    title: "Showcase unlimited videos",
+    desc: "Display an unlimited number of videos seamlessly. Tailor each gallery to reflect your unique brand and the essence of every event.",
+    img: "/images/Feature-1.svg",
+  },
+  {
+    title: "Seamless viewing, anywhere",
+    desc: "Offer your clients a professional, ad-free viewing experience, from mobile to 4K TV, ensuring their cherished moments are always a tap away.",
+    img: "/images/Feature-2.svg",
+  },
+];
+
+export const featuresList = [
+  {
+    icon: <Wand className="h-8 w-8 text-white" />,
+    title: "Customized Galleries",
+    desc: "Craft galleries tailored to each event, ensuring a unique and personalized showcase for your clients.",
+  },
+  {
+    icon: <ImageUp className="h-8 w-8 text-white" />,
+    title: "Branded Experience",
+    desc: "Incorporate your logo and brand colors, providing a cohesive viewing experience across all videos.",
+  },
+  {
+    icon: <MessageSquareMore className="h-8 w-8 text-white" />,
+    title: "Direct Feedback Channels",
+    desc: "Enable real-time feedback on your videos, allowing for immediate client interaction and satisfaction.",
+  },
+  {
+    icon: <Share2 className="h-8 w-8 text-white" />,
+    title: "Easy Sharing & Downloads",
+    desc: "Effortlessly share galleries with clients and enable easy video downloads for personal use.",
+  },
+  {
+    icon: <ShieldCheck className="h-8 w-8 text-white" />,
+    title: "Client-Specific Access",
+    desc: "Control who sees your work with client-specific access, ensuring privacy and exclusivity.",
+  },
+  {
+    icon: <CircleFadingPlus className="h-8 w-8 text-white" />,
+    title: "Integrate with Social Platforms",
+    desc: "Easily share your video galleries on social media, expanding your reach and engagement.",
+  },
 ];

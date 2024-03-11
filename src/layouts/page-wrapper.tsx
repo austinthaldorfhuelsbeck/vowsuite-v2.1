@@ -1,6 +1,6 @@
 import { type PropsWithChildren } from "react";
-import Footer from "./footer";
-import Navigation from "./navigation";
+import Footer from "../components/global/footer";
+import Navigation from "../components/global/navigation";
 
 const PageWrapper = (props: PropsWithChildren) => {
   return (
