@@ -1,4 +1,4 @@
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { navigation } from "~/lib/constants";
@@ -12,11 +12,15 @@ const LoginButton = () => (
   </Link>
 );
 
-const Navigation = (props: { isSignedIn?: boolean }) => {
+const Navigation = () => {
+  const { isSignedIn, isLoaded } = useUser();
   return (
     <header className="relative flex items-center justify-between p-4">
       <aside className="px-5">
-        <Link href="/" className="flex items-center gap-2">
+        <Link
+          href={isLoaded && isSignedIn ? "/studio" : "/"}
+          className="flex items-center gap-2"
+        >
           <Image
             src={"./assets/logo.svg"}
             alt="Vowsuite"
@@ -27,7 +31,7 @@ const Navigation = (props: { isSignedIn?: boolean }) => {
         </Link>
       </aside>
 
-      {!props.isSignedIn && (
+      {isLoaded && !isSignedIn && (
         <nav className="absolute left-[50%] top-[50%] hidden translate-x-[-50%] translate-y-[-50%] transform md:block">
           <ul className="flex items-center justify-center gap-6">
             {navigation.map((item, index) => (
@@ -45,9 +49,8 @@ const Navigation = (props: { isSignedIn?: boolean }) => {
       )}
 
       <aside className="flex gap-2">
-        {props.isSignedIn ? (
-          <UserButton />
-        ) : (
+        {isSignedIn && <UserButton />}{" "}
+        {isLoaded && !isSignedIn && (
           <>
             <LoginButton />
             {/* <FreeTrialButton /> */}
