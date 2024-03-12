@@ -20,4 +20,24 @@ export const userRouter = createTRPCRouter({
 
       return user;
     }),
+
+  create: publicProcedure
+    .input(
+      z.object({
+        email: z.string(),
+        firstName: z.string(),
+        lastName: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const user = await ctx.db.user.create({
+        data: {
+          email: input.email,
+          firstName: input.firstName,
+          lastName: input.lastName,
+        },
+      });
+
+      return user;
+    }),
 });

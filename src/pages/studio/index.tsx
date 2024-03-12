@@ -97,14 +97,6 @@ const NewUserForm = (props: { user: Partial<User> }) => {
             </div>
           </div>
 
-          <Image
-            src={form.watch("avatar") ?? "/images/user-placeholder-image.jpg"}
-            alt="Your profile picture"
-            width={100}
-            height={100}
-            className="rounded-full"
-          />
-
           <FormField
             control={form.control}
             name="email"
@@ -119,8 +111,16 @@ const NewUserForm = (props: { user: Partial<User> }) => {
             )}
           />
 
+          <Image
+            src={form.watch("avatar") ?? "/images/user-placeholder-image.jpg"}
+            alt="Your profile picture"
+            width={100}
+            height={100}
+            className="rounded-full"
+          />
+
           <Button type="submit" variant="secondary">
-            Get started 🚀
+            Get started
           </Button>
         </form>
       </div>
@@ -130,6 +130,17 @@ const NewUserForm = (props: { user: Partial<User> }) => {
 
 const Studio = () => {
   const { user, isLoaded } = useUser();
+
+  const ctx = api.useUtils();
+
+  const { mutate, isLoading: isPosting } = api.user.create.useMutation({
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
 
   if (!isLoaded) {
     return (
