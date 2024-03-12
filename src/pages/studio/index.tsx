@@ -4,6 +4,7 @@ import { type User } from "@prisma/client";
 import { RocketIcon } from "lucide-react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { z } from "zod";
 import { LoadingPage } from "~/components/global/loading";
 import Navigation from "~/components/global/navigation";
@@ -19,6 +20,12 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 import PageWrapper from "~/layouts/page-wrapper";
 import { api } from "~/utils/api";
 
@@ -38,12 +45,29 @@ const formSchema = z.object({
 });
 
 const NewUserForm = (props: { user: Partial<User> }) => {
+  const { mutate, isLoading: isPosting } = api.user.create.useMutation({
+    onSuccess: (data) => {
+      console.log(data);
+      // TODO: Redirect to the next page
+    },
+    onError: (error) => {
+      const errorMessage = error.data?.zodError?.fieldErrors.content;
+      toast.error(
+        errorMessage?.[0]
+          ? `Error: ${errorMessage[0]}`
+          : "An error occurred. Please try again.",
+      );
+    },
+  });
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { ...props.user, avatar: props.user.avatar ?? "" },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => console.log(values);
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    mutate(values);
+  };
 
   return (
     <Form {...form}>
@@ -73,7 +97,11 @@ const NewUserForm = (props: { user: Partial<User> }) => {
                   <FormItem>
                     <FormLabel>First name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your first name" {...field} />
+                      <Input
+                        placeholder="Your first name"
+                        disabled={isPosting}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -88,7 +116,11 @@ const NewUserForm = (props: { user: Partial<User> }) => {
                   <FormItem>
                     <FormLabel>Last name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your last name" {...field} />
+                      <Input
+                        placeholder="Your last name"
+                        disabled={isPosting}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -102,9 +134,23 @@ const NewUserForm = (props: { user: Partial<User> }) => {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <FormLabel>Email</FormLabel>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      If you signed in with a third-party service, you can
+                      change your email address later.
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 <FormControl>
-                  <Input placeholder="Your email address" {...field} />
+                  <Input
+                    placeholder="Your email address"
+                    disabled={isPosting || !!props.user.email}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -131,17 +177,6 @@ const NewUserForm = (props: { user: Partial<User> }) => {
 const Studio = () => {
   const { user, isLoaded } = useUser();
 
-  const ctx = api.useUtils();
-
-  const { mutate, isLoading: isPosting } = api.user.create.useMutation({
-    onSuccess: (data) => {
-      console.log(data);
-    },
-    onError: (error) => {
-      console.error(error);
-    },
-  });
-
   if (!isLoaded) {
     return (
       <PageWrapper>
@@ -158,21 +193,12 @@ const Studio = () => {
       />
     );
 
-  const { data: userFromDb, isLoading } = api.user.getByEmail.useQuery(
+  const { data: userFromDb } = api.user.getByEmail.useQuery(
     {
       email: user?.emailAddresses[0]?.emailAddress,
     },
     { retry: false },
   );
-
-  if (isLoading) {
-    return (
-      <PageWrapper>
-        <Navigation />
-        <LoadingPage />
-      </PageWrapper>
-    );
-  }
 
   return (
     <PageWrapper>

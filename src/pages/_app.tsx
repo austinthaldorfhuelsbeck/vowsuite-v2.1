@@ -6,6 +6,7 @@ import { api } from "~/utils/api";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import Head from "next/head";
+import { Toaster } from "react-hot-toast";
 import { cn } from "~/lib/utils";
 import ThemeProvider from "~/providers/theme-provider";
 import "~/styles/globals.css";
@@ -32,6 +33,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           enableSystem
           disableTransitionOnChange
         >
+          <Toaster position="bottom-center" />
           <Component {...pageProps} />
         </ThemeProvider>
       </ClerkProvider>
