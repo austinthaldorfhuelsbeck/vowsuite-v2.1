@@ -20,9 +20,7 @@ const CTA: FC = () => (
               </p>
             </div>
             <div className="mt-5 flex justify-center text-sm font-medium">
-              <Button className="border border-primary hover:bg-primary/20 hover:text-primary">
-                Start free trial →
-              </Button>
+              <Button variant="secondary">Start free trial →</Button>
             </div>
           </div>
         </AnimateWrapper>

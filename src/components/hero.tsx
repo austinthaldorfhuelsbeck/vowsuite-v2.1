@@ -58,7 +58,7 @@ const Hero = () => (
       wrapperClassName="max-w-3xl h-[250px] top-12 inset-0 sm:h-[300px] lg:h-[650px]"
     >
       <div className="align-center flex flex-col items-center space-y-3">
-        <Button className="mx-auto border border-primary hover:bg-primary/20 hover:text-primary">
+        <Button variant="secondary" className="mx-auto">
           Start free trial →
         </Button>
         <span className="text-sm font-extralight">No credit card required</span>

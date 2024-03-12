@@ -44,9 +44,7 @@ const Navigation = (props: { user?: Partial<User> }) => {
             <Link href="/studio">
               <Button variant="ghost">Log in</Button>
             </Link>
-            <Button className="border border-primary hover:bg-primary/20 hover:text-primary">
-              Start free trial →
-            </Button>
+            <Button variant="secondary">Start free trial →</Button>
           </>
         )}
       </aside>

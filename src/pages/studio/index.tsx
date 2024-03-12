@@ -119,7 +119,9 @@ const NewUserForm = (props: { user: Partial<User> }) => {
             )}
           />
 
-          <Button type="submit">Save</Button>
+          <Button type="submit" variant="secondary">
+            Get started 🚀
+          </Button>
         </form>
       </div>
     </Form>
