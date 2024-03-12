@@ -21,7 +21,7 @@ const CTA: FC = () => (
             </div>
             <div className="mt-5 flex justify-center text-sm font-medium">
               <Button className="border border-primary hover:bg-primary/20 hover:text-primary">
-                Start your free trial →
+                Start free trial →
               </Button>
             </div>
           </div>

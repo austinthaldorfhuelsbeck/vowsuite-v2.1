@@ -1,4 +1,3 @@
-import { Wand } from "lucide-react";
 import AnimateWrapper from "~/layouts/animate-wrapper";
 import SectionWrapper from "~/layouts/section-wrapper";
 import { featuresList } from "~/lib/constants";
@@ -24,7 +23,7 @@ const Features = () => (
             {featuresList.map((item, idx) => (
               <li key={idx} className="space-y-3 rounded-xl border p-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg">
-                  <Wand className="h-8 w-8" />
+                  {item.icon}
                 </div>
                 <h3 className="text-lg font-semibold">{item.title}</h3>
                 <p>{item.desc}</p>

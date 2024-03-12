@@ -1,25 +1,16 @@
-import { UserButton, useUser } from "@clerk/nextjs";
+import { type User } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { navigation } from "~/lib/constants";
 import { Button } from "../ui/button";
+import UserMenu from "../user-menu";
 
-const LoginButton = () => (
-  <Link
-    href="/studio"
-    className="my-auto rounded px-2 py-1 text-sm font-semibold transition-all hover:bg-primary/10 hover:text-primary"
-  >
-    Log in
-  </Link>
-);
-
-const Navigation = () => {
-  const { isSignedIn, isLoaded } = useUser();
+const Navigation = (props: { user?: Partial<User> }) => {
   return (
     <header className="relative flex items-center justify-between p-4">
       <aside className="px-5">
         <Link
-          href={isLoaded && isSignedIn ? "/studio" : "/"}
+          href={props.user ? "/studio" : "/"}
           className="flex items-center gap-2"
         >
           <Image
@@ -32,9 +23,9 @@ const Navigation = () => {
         </Link>
       </aside>
 
-      {isLoaded && !isSignedIn && (
+      {!props.user && (
         <nav className="absolute left-[50%] top-[50%] hidden translate-x-[-50%] translate-y-[-50%] transform md:block">
-          <ul className="flex items-center justify-center gap-6">
+          <ul className="flex items-center justify-center">
             {navigation.map((item, index) => (
               <li key={index}>
                 <Link href={item.href}>
@@ -47,14 +38,14 @@ const Navigation = () => {
       )}
 
       <aside className="flex gap-2">
-        {isSignedIn && <UserButton />}{" "}
-        {isLoaded && !isSignedIn && (
+        {props.user && <UserMenu user={props.user} />}
+        {!props.user && (
           <>
             <Link href="/studio">
               <Button variant="ghost">Log in</Button>
             </Link>
             <Button className="border border-primary hover:bg-primary/20 hover:text-primary">
-              Start your free trial →
+              Start free trial →
             </Button>
           </>
         )}

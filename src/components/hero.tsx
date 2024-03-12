@@ -8,9 +8,10 @@ const Hero = () => (
     <div className="mx-auto max-w-screen-xl gap-12 overflow-hidden px-4 pt-24 md:flex md:px-8">
       <AnimateWrapper>
         <div className="max-w-2xl flex-none space-y-5">
-          <a
-            href="javascript:void(0)"
-            className="inline-flex items-center gap-x-6 rounded-full border border-primary p-1 pr-6 text-sm font-medium duration-150 hover:bg-primary/20 hover:text-primary"
+          <Button
+            variant={"secondary"}
+            // href="javascript:void(0)"
+            // className="inline-flex items-center gap-x-6 rounded-full border border-primary p-1 pr-6 text-sm font-medium duration-150 hover:bg-primary/20 hover:text-primary"
           >
             <span className="inline-block rounded-full bg-[var(--peach-fuzz)] px-3 py-1">
               News
@@ -30,7 +31,7 @@ const Hero = () => (
                 />
               </svg>
             </p>
-          </a>
+          </Button>
           <h1 className="text-4xl font-extrabold sm:text-5xl">
             Capture, curate, celebrate. <br /> Your events, elevated.
           </h1>
@@ -39,11 +40,6 @@ const Hero = () => (
             Vowsuite is the seamless video gallery platform where every event is
             transformed into a shared, unforgettable journey.
           </p>
-          <div className="flex items-center gap-x-3 sm:text-sm">
-            <Button className="border border-primary hover:bg-primary/20 hover:text-primary">
-              Start your free trial →
-            </Button>
-          </div>
         </div>
       </AnimateWrapper>
 
@@ -61,15 +57,12 @@ const Hero = () => (
       className="mt-10 p-10"
       wrapperClassName="max-w-3xl h-[250px] top-12 inset-0 sm:h-[300px] lg:h-[650px]"
     >
-      <AnimateWrapper>
-        <Image
-          src="/images/screenshot.png"
-          className="rounded-2xl shadow-lg"
-          alt="Vowsuite UI"
-          width={1440}
-          height={800}
-        />
-      </AnimateWrapper>
+      <div className="align-center flex flex-col items-center space-y-3">
+        <Button className="mx-auto border border-primary hover:bg-primary/20 hover:text-primary">
+          Start free trial →
+        </Button>
+        <span className="text-sm font-extralight">No credit card required</span>
+      </div>
     </GradientWrapper>
   </section>
 );

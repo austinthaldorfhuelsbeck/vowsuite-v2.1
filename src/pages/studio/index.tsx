@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { LoadingPage } from "~/components/global/loading";
+import Navigation from "~/components/global/navigation";
 import ServerError from "~/components/server-error";
 import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
@@ -20,6 +21,14 @@ import {
 import { Input } from "~/components/ui/input";
 import PageWrapper from "~/layouts/page-wrapper";
 import { api } from "~/utils/api";
+
+const Sidebar = () => {
+  return (
+    <aside className="my-3 ml-3 h-screen w-56 rounded-lg border">
+      <nav className="space-y-4 p-4">Sidebar</nav>
+    </aside>
+  );
+};
 
 const formSchema = z.object({
   firstName: z.string().min(2),
@@ -38,7 +47,7 @@ const NewUserForm = (props: { user: Partial<User> }) => {
 
   return (
     <Form {...form}>
-      <div className="mx-auto max-w-xl">
+      <div className="mx-auto max-w-xl p-3">
         <h1 className="mx-auto my-3 inline-block bg-gradient-to-l from-primary to-primary/70 bg-clip-text text-4xl font-bold text-transparent">
           {`Welcome to Vowsuite, ${form.watch("firstName")}!`}
         </h1>
@@ -146,6 +155,7 @@ const Studio = () => {
   if (isLoading) {
     return (
       <PageWrapper>
+        <Navigation />
         <LoadingPage />
       </PageWrapper>
     );
@@ -153,17 +163,26 @@ const Studio = () => {
 
   return (
     <PageWrapper>
-      {userFromDb && <pre>{JSON.stringify(userFromDb, null, "\t")}</pre>}
-      {!userFromDb && (
-        <NewUserForm
-          user={{
-            firstName: user.externalAccounts[0]?.firstName,
-            lastName: user.externalAccounts[0]?.lastName,
-            email: user.emailAddresses[0]?.emailAddress,
-            avatar: user.imageUrl,
-          }}
-        />
-      )}
+      <Navigation
+        user={{
+          avatar: user?.imageUrl,
+          firstName: user?.firstName ?? undefined,
+          lastName: user?.lastName ?? undefined,
+        }}
+      />
+      <div className="flex">
+        <Sidebar />
+        {!userFromDb && (
+          <NewUserForm
+            user={{
+              firstName: user.externalAccounts[0]?.firstName,
+              lastName: user.externalAccounts[0]?.lastName,
+              email: user.emailAddresses[0]?.emailAddress,
+              avatar: user.imageUrl,
+            }}
+          />
+        )}
+      </div>
     </PageWrapper>
   );
 };
