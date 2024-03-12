@@ -4,7 +4,7 @@ import Navigation from "../components/global/navigation";
 
 const PageWrapper = (props: PropsWithChildren) => {
   return (
-    <div className="h-full w-full">
+    <div className="h-screen w-full">
       <Navigation />
       {props.children}
       <Footer />
