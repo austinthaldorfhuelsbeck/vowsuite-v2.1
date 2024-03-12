@@ -31,10 +31,10 @@ const footerLinks = [
 
 // Social links configuration
 const socialLinks = [
-  { href: "#", icon: "/social/x.svg", alt: "X (Twitter)" },
   { href: "#", icon: "/social/github.svg", alt: "GitHub" },
   { href: "#", icon: "/social/facebook.svg", alt: "Facebook" },
   { href: "#", icon: "/social/instagram.svg", alt: "Instagram" },
+  { href: "#", icon: "/social/x.svg", alt: "X (Twitter)" },
   { href: "#", icon: "/social/youtube.svg", alt: "YouTube" },
   { href: "#", icon: "/social/reddit.svg", alt: "Reddit" },
   { href: "#", icon: "/social/tiktok.svg", alt: "TikTok" },
