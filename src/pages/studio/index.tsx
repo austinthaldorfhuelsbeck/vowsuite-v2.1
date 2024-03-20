@@ -31,7 +31,7 @@ const Studio = () => {
     {
       email: user?.emailAddresses[0]?.emailAddress,
     },
-    { retry: false },
+    { retry: 1 },
   );
 
   return (
