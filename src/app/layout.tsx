@@ -2,12 +2,9 @@ import "~/styles/globals.css";
 
 import { Inter } from "next/font/google";
 
-import { TRPCReactProvider } from "~/trpc/react";
-
-import { cn } from "~/lib/utils";
-
 import { ClerkProvider } from "@clerk/nextjs";
-import ThemeProvider from "~/providers/theme-provider";
+import { ThemeProvider } from "next-themes";
+import { TRPCReactProvider } from "~/trpc/react";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -28,7 +25,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={cn("font-sans", inter.variable)}>
+      <body className={`font-sans ${inter.variable}`}>
         <ClerkProvider>
           <ThemeProvider
             attribute="class"

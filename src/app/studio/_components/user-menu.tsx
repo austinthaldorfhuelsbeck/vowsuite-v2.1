@@ -15,7 +15,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "../../components/ui/dropdown-menu";
+} from "~/components/ui/dropdown-menu";
 
 const UserMenu = (props: { user?: Partial<User> }) => {
   const { signOut } = useClerk();

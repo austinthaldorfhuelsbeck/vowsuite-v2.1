@@ -1,8 +1,8 @@
 import { type User } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
+import UserMenu from "~/app/studio/_components/user-menu";
 import { navigation } from "~/lib/constants";
-import UserMenu from "../../app/_components/user-menu";
 import { Button } from "../ui/button";
 
 const Navigation = (props: { user?: Partial<User> }) => {
@@ -44,7 +44,9 @@ const Navigation = (props: { user?: Partial<User> }) => {
             <Link href="/studio">
               <Button variant="ghost">Log in</Button>
             </Link>
-            <Button variant="secondary">Start free trial →</Button>
+            <Link href="/studio">
+              <Button variant="secondary">Start free trial →</Button>
+            </Link>
           </>
         )}
       </aside>

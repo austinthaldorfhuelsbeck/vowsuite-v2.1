@@ -1,7 +1,8 @@
 import Image from "next/image";
+import { Button } from "~/components/ui/button";
 import AnimateWrapper from "~/layouts/animate-wrapper";
 import GradientWrapper from "~/layouts/gradient-wrapper";
-import { Button } from "../../components/ui/button";
+
 
 const Hero = () => (
   <section>
