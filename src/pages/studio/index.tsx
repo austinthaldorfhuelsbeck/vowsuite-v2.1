@@ -44,7 +44,7 @@ const Studio = () => {
         }}
       />
       <div className="mb-3 flex flex-col p-3 sm:flex-row">
-        <Sidebar />
+        <Sidebar user={userFromDb} />
 
         {!userFromDb && (
           <NewUserForm

@@ -29,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { Separator } from "../ui/separator";
 import {
   Tooltip,
   TooltipContent,
@@ -74,7 +75,7 @@ const AgencyForm = (props: { agency?: Agency }) => {
           <ResizablePanel defaultSize={50} minSize={40} className="p-3">
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="flex h-full flex-col justify-between space-y-3"
+              className="flex h-full flex-col justify-between space-y-5"
             >
               {!props.agency && (
                 <Alert>
@@ -101,16 +102,18 @@ const AgencyForm = (props: { agency?: Agency }) => {
                 )}
               />
 
-              <FormLabel>Logo</FormLabel>
-              <Image
-                src={
-                  form.watch("avatar") ?? "/images/user-placeholder-image.jpg"
-                }
-                alt="Your profile picture"
-                width={100}
-                height={100}
-                className="rounded-full"
-              />
+              <>
+                <FormLabel>Logo</FormLabel>
+                <Image
+                  src={
+                    form.watch("avatar") ?? "/images/user-placeholder-image.jpg"
+                  }
+                  alt="Your profile picture"
+                  width={100}
+                  height={100}
+                  className="rounded-full"
+                />
+              </>
 
               <div className="flex flex-col xl:flex-row xl:space-x-2">
                 <div className="flex-1">
@@ -177,8 +180,58 @@ const AgencyForm = (props: { agency?: Agency }) => {
                 </div>
               </div>
 
+              <div className="flex flex-col md:flex-row md:space-x-2">
+                <div className="mt-auto flex-1">
+                  <FormField
+                    control={form.control}
+                    name="colorBackground"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Background color</FormLabel>
+                        <FormControl>
+                          <Input type="color" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="mt-auto flex-1">
+                  <FormField
+                    control={form.control}
+                    name="colorText"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Text color</FormLabel>
+                        <FormControl>
+                          <Input type="color" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="mt-auto flex-1">
+                  <FormField
+                    control={form.control}
+                    name="colorAccent"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Accent color</FormLabel>
+                        <FormControl>
+                          <Input type="color" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              <Separator />
+
               <Button type="submit" variant="secondary" className="mr-auto">
-                Create agency
+                Save changes
               </Button>
             </form>
           </ResizablePanel>

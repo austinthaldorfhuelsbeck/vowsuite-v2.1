@@ -1,8 +1,13 @@
+import { type User } from "@prisma/client";
 import { FolderPlusIcon, MinusIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/button";
 
-const Sidebar = () => {
+type SidebarProps = {
+  user?: User;
+};
+
+const Sidebar = ({ user }: SidebarProps) => {
   const [isShowing, setIsShowing] = useState(false);
   const toggle = () => setIsShowing(!isShowing);
 
@@ -25,7 +30,7 @@ const Sidebar = () => {
         </div>
 
         <div className={sidebarContentClasses}>
-          <Button disabled className="w-full">
+          <Button disabled={user?.agencyId ? false : true} className="w-full">
             <div className="flex space-x-2">
               <FolderPlusIcon className="my-auto h-5 w-5" />
               <span className="my-auto">New Gallery</span>
