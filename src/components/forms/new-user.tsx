@@ -61,7 +61,7 @@ const NewUserForm = (props: { user: Partial<User> }) => {
 
   return (
     <Form {...form}>
-      <div className="mx-auto max-w-xl p-3">
+      <div className="mx-auto max-w-xl">
         <h1 className="mx-auto my-3 inline-block bg-gradient-to-l from-primary to-primary/70 bg-clip-text text-4xl font-bold text-transparent">
           {`Welcome to Vowsuite, ${form.watch("firstName")}!`}
         </h1>
