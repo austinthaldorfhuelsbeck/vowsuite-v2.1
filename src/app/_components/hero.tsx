@@ -1,20 +1,16 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "~/components/ui/button";
 import AnimateWrapper from "~/layouts/animate-wrapper";
 import GradientWrapper from "~/layouts/gradient-wrapper";
-
 
 const Hero = () => (
   <section>
     <div className="mx-auto max-w-screen-xl gap-12 overflow-hidden px-4 pt-24 md:flex md:px-8">
       <AnimateWrapper>
         <div className="max-w-2xl flex-none space-y-5">
-          <Button
-            variant={"secondary"}
-            // href="javascript:void(0)"
-            // className="inline-flex items-center gap-x-6 rounded-full border border-primary p-1 pr-6 text-sm font-medium duration-150 hover:bg-primary/20 hover:text-primary"
-          >
-            <span className="inline-block rounded-full bg-[var(--peach-fuzz)] px-3 py-1">
+          <Button variant={"secondary"}>
+            <span className="mr-5 inline-block rounded-full bg-primary px-3 py-1 text-background">
               News
             </span>
             <p className="flex items-center">
@@ -59,9 +55,11 @@ const Hero = () => (
       wrapperClassName="max-w-3xl h-[250px] top-12 inset-0 sm:h-[300px] lg:h-[650px]"
     >
       <div className="align-center flex flex-col items-center space-y-3">
-        <Button variant="secondary" className="mx-auto">
-          Start free trial →
-        </Button>
+        <Link href="/studio">
+          <Button variant="secondary" className="mx-auto">
+            Start free trial →
+          </Button>
+        </Link>
         <span className="text-sm font-extralight">No credit card required</span>
       </div>
     </GradientWrapper>

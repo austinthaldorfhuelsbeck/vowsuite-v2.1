@@ -1,17 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const ServerError = (props: { code: string; message: string }) => {
+const ServerError = (props: { code: number; message: string }) => {
   return (
     <section className="absolute right-0 top-0 flex h-screen w-screen items-center justify-center">
       <div className="mx-auto flex max-w-screen-sm flex-col text-center">
-        <Image
-          src="/images/by-the-road.svg"
-          alt="Illustration of a person standing by the road."
-          width={400}
-          height={300}
-          className="mx-auto my-5"
-        />
         <h1 className="mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-8xl font-extrabold tracking-tight text-transparent lg:text-9xl">
           {props.code}
         </h1>
@@ -23,6 +16,13 @@ const ServerError = (props: { code: string; message: string }) => {
             <p>Go back home</p>
           </div>
         </Link>
+        <Image
+          src="/images/by-the-road.svg"
+          alt="Illustration of a person standing by the road."
+          width={400}
+          height={300}
+          className="mx-auto my-5 rounded-lg"
+        />
       </div>
     </section>
   );
