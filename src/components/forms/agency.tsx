@@ -179,11 +179,13 @@ const AgencyForm = (props: { agency?: Agency }) => {
           <ResizablePanel defaultSize={50} minSize={35}>
             <div className="flex h-full flex-col space-y-2 px-3 py-3">
               <div className="flex space-x-2 text-sm font-extralight text-muted-foreground">
-                <span>Client Preview</span>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <InfoIcon size={12} className="my-auto" />
+                      <FormLabel className="flex space-x-1">
+                        <span>Client Preview</span>
+                        <InfoIcon size={12} className="my-auto" />
+                      </FormLabel>
                     </TooltipTrigger>
                     <TooltipContent>
                       This is how your agency will appear to clients while they
