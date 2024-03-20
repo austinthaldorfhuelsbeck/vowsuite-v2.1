@@ -1,7 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type User } from "@prisma/client";
+import { QuestionMarkCircledIcon } from "@radix-ui/react-icons";
 import { RocketIcon } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
@@ -32,9 +34,12 @@ const formSchema = z.object({
 });
 
 const NewUserForm = (props: { user: Partial<User> }) => {
+  const router = useRouter();
   const { mutate, isLoading: isPosting } = api.user.create.useMutation({
     onSuccess: (data) => {
-      console.log(data);
+      console.log("Congratulations! You're now a Vowsuite user!", data);
+      router.reload();
+      toast.success("Congratulations! You're now a Vowsuite user!");
     },
     onError: (error) => {
       const errorMessage = error.data?.zodError?.fieldErrors.content;
@@ -53,7 +58,7 @@ const NewUserForm = (props: { user: Partial<User> }) => {
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log(values);
-    mutate(values);
+    // mutate(values);
   };
 
   return (
@@ -124,7 +129,10 @@ const NewUserForm = (props: { user: Partial<User> }) => {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel className="flex space-x-1">
+                        <span>Email</span>
+                        <QuestionMarkCircledIcon />
+                      </FormLabel>
                     </TooltipTrigger>
                     <TooltipContent>
                       If you signed in with a third-party service, you can
