@@ -2,8 +2,8 @@ import { type User } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { navigation } from "~/lib/constants";
+import UserMenu from "../../app/_components/user-menu";
 import { Button } from "../ui/button";
-import UserMenu from "../user-menu";
 
 const Navigation = (props: { user?: Partial<User> }) => {
   return (

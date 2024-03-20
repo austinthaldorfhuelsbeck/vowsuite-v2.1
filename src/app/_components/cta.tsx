@@ -1,7 +1,7 @@
 import { type FC } from "react";
 import AnimateWrapper from "~/layouts/animate-wrapper";
 import GradientWrapper from "~/layouts/gradient-wrapper";
-import { Button } from "./ui/button";
+import { Button } from "../../components/ui/button";
 
 const CTA: FC = () => (
   <section>

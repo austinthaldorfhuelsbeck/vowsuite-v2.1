@@ -2,7 +2,7 @@ import { useClerk } from "@clerk/nextjs";
 
 import { type User } from "@prisma/client";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +15,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "../../components/ui/dropdown-menu";
 
 const UserMenu = (props: { user?: Partial<User> }) => {
   const { signOut } = useClerk();

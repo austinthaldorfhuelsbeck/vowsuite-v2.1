@@ -1,5 +1,5 @@
 import { type PropsWithChildren } from "react";
-import Footer from "../components/global/footer";
+import Footer from "~/components/global/footer";
 
 const PageWrapper = (props: PropsWithChildren) => {
   return (

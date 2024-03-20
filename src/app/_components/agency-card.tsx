@@ -2,9 +2,9 @@ import { type Agency } from "@prisma/client";
 import { ArrowUpRightFromSquareIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "./ui/button";
-import { Card, CardContent, CardHeader } from "./ui/card";
-import { Separator } from "./ui/separator";
+import { Button } from "../../components/ui/button";
+import { Card, CardContent, CardHeader } from "../../components/ui/card";
+import { Separator } from "../../components/ui/separator";
 
 const AgencyCard = (props: { agency: Partial<Agency> }) => {
   return (
