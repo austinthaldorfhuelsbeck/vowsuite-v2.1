@@ -10,6 +10,8 @@ const Sidebar = () => {
 
   const toggleButtonClasses =
     "my-auto h-5 w-5 inline-flex sm:hidden cursor-pointer";
+  
+  const sidebarContentClasses = `${isShowing ? "inline-flex" : "hidden sm:inline-flex"} w-full`;
 
   return (
     <aside className="w-full rounded-lg border sm:mr-3 sm:h-full sm:min-h-96 sm:w-72">
@@ -23,16 +25,15 @@ const Sidebar = () => {
             <PlusIcon className={toggleButtonClasses} onClick={toggle} />
           )}
         </div>
-        {isShowing && (
-          <>
-            <Button disabled>
-              <div className="flex space-x-2">
-                <FolderPlusIcon className="my-auto h-5 w-5" />
-                <span className="my-auto">New Gallery</span>
-              </div>
-            </Button>
-          </>
-        )}
+
+        <div className={sidebarContentClasses}>
+          <Button disabled className="w-full">
+            <div className="flex space-x-2">
+              <FolderPlusIcon className="my-auto h-5 w-5" />
+              <span className="my-auto">New Gallery</span>
+            </div>
+          </Button>
+        </div>
       </nav>
     </aside>
   );
