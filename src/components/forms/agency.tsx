@@ -39,8 +39,8 @@ import {
 const initialFormValues = {
   name: "My Agency",
   avatar: "/assets/user-placeholder.jpg",
-  fontPrimary: "Inter",
-  fontSecondary: "Roboto",
+  fontPrimary: "Georgia",
+  fontSecondary: "Helvetica",
   colorAccent: "#ffbe98",
   colorBackground: "#f2e8da",
   colorText: "#1c1917",
@@ -69,7 +69,7 @@ const AgencyForm = (props: { agency?: Agency }) => {
 
   return (
     <Form {...form}>
-      <div className="mx-3 w-full rounded-lg border">
+      <div className="w-full rounded-lg border">
         <ResizablePanelGroup direction="horizontal">
           <ResizablePanel defaultSize={50} minSize={40} className="p-3">
             <form
@@ -112,63 +112,72 @@ const AgencyForm = (props: { agency?: Agency }) => {
                 className="rounded-full"
               />
 
-              <FormField
-                control={form.control}
-                name="fontPrimary"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Primary font</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a font" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectItem value="Inter">Inter</SelectItem>
-                          <SelectItem value="Roboto">Roboto</SelectItem>
-                          <SelectItem value="Georgia">Georgia</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="flex flex-col xl:flex-row xl:space-x-2">
+                <div className="flex-1">
+                  <FormField
+                    control={form.control}
+                    name="fontPrimary"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Primary font</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a font" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectItem value="Georgia">Georgia</SelectItem>
+                              <SelectItem value="Roboto">Roboto</SelectItem>
+                              <SelectItem value="Helvetica">
+                                Helvetica
+                              </SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="flex-1">
+                  <FormField
+                    control={form.control}
+                    name="fontSecondary"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Secondary font</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a font" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectItem value="Georgia">Georgia</SelectItem>
+                              <SelectItem value="Roboto">Roboto</SelectItem>
+                              <SelectItem value="Helvetica">
+                                Helvetica
+                              </SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
 
-              <FormField
-                control={form.control}
-                name="fontSecondary"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Secondary font</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a font" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectItem value="Inter">Inter</SelectItem>
-                          <SelectItem value="Roboto">Roboto</SelectItem>
-                          <SelectItem value="Georgia">Georgia</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button type="submit" variant="secondary">
+              <Button type="submit" variant="secondary" className="mr-auto">
                 Create agency
               </Button>
             </form>
@@ -194,7 +203,7 @@ const AgencyForm = (props: { agency?: Agency }) => {
                   </Tooltip>
                 </TooltipProvider>
               </div>
-              <AgencyCard agency={props.agency ?? form.watch()} />
+              <AgencyCard agency={form.watch()} />
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>

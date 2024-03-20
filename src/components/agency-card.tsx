@@ -9,7 +9,10 @@ import { Separator } from "./ui/separator";
 const AgencyCard = (props: { agency: Partial<Agency> }) => {
   return (
     <Card
-    // className={`bg-[${props.agency?.colorBackground}] text-[${props.agency?.colorText}]`}
+      style={{
+        backgroundColor: props.agency?.colorBackground ?? "none",
+        color: props.agency?.colorText ?? "none",
+      }}
     >
       <CardHeader>
         <Image
@@ -19,11 +22,28 @@ const AgencyCard = (props: { agency: Partial<Agency> }) => {
           height={65}
           className="mx-auto rounded-full"
         />
-        <h2 className="text-center text-xl font-bold">{props.agency?.name}</h2>
+        <h2
+          className="text-center text-2xl font-bold"
+          style={{
+            fontFamily: props.agency?.fontPrimary ?? "none",
+          }}
+        >
+          {props.agency?.name}
+        </h2>
       </CardHeader>
-      <CardContent className="flex flex-col">
-        <Separator />
-        <Button variant="ghost" className="my-5">
+      <CardContent
+        className="flex flex-col"
+        style={{
+          fontFamily: props.agency?.fontSecondary ?? "none",
+        }}
+      >
+        <Separator
+          style={{ backgroundColor: props.agency?.colorAccent ?? "none" }}
+        />
+        <Button
+          variant="ghost"
+          className="mx-auto my-5 hover:bg-black/10 hover:text-inherit"
+        >
           <div className="flex space-x-2">
             <ArrowUpRightFromSquareIcon
               width={14}
@@ -35,7 +55,9 @@ const AgencyCard = (props: { agency: Partial<Agency> }) => {
             </Link>
           </div>
         </Button>
-        <Separator />
+        <Separator
+          style={{ backgroundColor: props.agency?.colorAccent ?? "none" }}
+        />
         <p className="my-4 text-center text-sm">Follow us</p>
         <div className="flex justify-center space-x-4">
           <Link href={props.agency?.facebook ?? "#"}>
