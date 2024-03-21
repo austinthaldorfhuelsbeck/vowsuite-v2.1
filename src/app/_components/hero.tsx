@@ -41,7 +41,7 @@ const Hero = () => (
       wrapperClasses="max-w-3xl h-[250px] top-12 inset-0 sm:h-[300px] lg:h-[650px]"
     >
       <div className="align-center flex flex-col items-center space-y-3">
-        <Link href="/studio">
+        <Link href="/sign-up">
           <Button variant="secondary" className="mx-auto">
             Start free trial →
           </Button>

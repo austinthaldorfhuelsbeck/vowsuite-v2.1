@@ -21,7 +21,7 @@ const CTA: FC = () => (
               </p>
             </div>
             <div className="mt-5 flex justify-center text-sm font-medium">
-              <Link href="/studio">
+              <Link href="/sign-up">
                 <Button variant="secondary">Start free trial →</Button>
               </Link>
             </div>

@@ -1,7 +1,8 @@
 "use client";
 
+import { SignOutButton } from "@clerk/nextjs";
 import { type User } from "@prisma/client";
-import Image from "next/image";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +17,17 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 
+const UserAvatar = (props: { user?: Partial<User> }) => {
+  return (
+    <Avatar>
+      <AvatarImage src={props.user?.avatar ?? undefined} alt="Profile Image" />
+      <AvatarFallback>
+        {`${props.user?.firstName?.[0] ?? ""}${props.user?.lastName?.[0] ?? ""}`.toUpperCase()}
+      </AvatarFallback>
+    </Avatar>
+  );
+};
+
 const UserMenu = (props: { user?: Partial<User> }) => {
   // const { signOut } = useClerk();
   // const router = useRouter();
@@ -26,28 +38,14 @@ const UserMenu = (props: { user?: Partial<User> }) => {
       <DropdownMenu>
         <div>
           <DropdownMenuTrigger>
-            <Image
-              src={props.user?.avatar ?? "/assets/user-placeholder.jpg"}
-              alt={"Profile Image"}
-              width={32}
-              height={32}
-              className="rounded-full"
-            />
+            <UserAvatar user={props.user} />
           </DropdownMenuTrigger>
         </div>
         <DropdownMenuContent className="mr-5 w-56">
           <DropdownMenuLabel className="font-bold">
             {props.user && (
               <div className="flex space-x-3">
-                {props.user?.avatar && (
-                  <Image
-                    src={props.user.avatar}
-                    alt={"Profile Image"}
-                    width={28}
-                    height={28}
-                    className="rounded-full"
-                  />
-                )}
+                {props.user?.avatar && <UserAvatar user={props.user} />}
                 <span>
                   {`${props.user?.firstName} ${props.user?.lastName}` ??
                     "Vowsuite User"}
@@ -78,8 +76,8 @@ const UserMenu = (props: { user?: Partial<User> }) => {
           </DropdownMenuGroup>
 
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={(e) => e.preventDefault()}>
-            Log out
+          <DropdownMenuItem>
+            <SignOutButton>Log out</SignOutButton>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
