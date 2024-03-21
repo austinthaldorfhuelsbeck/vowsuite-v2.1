@@ -1,11 +1,17 @@
 import { currentUser } from "@clerk/nextjs";
 import { type Agency } from "@prisma/client";
-import { InfoIcon } from "lucide-react";
+import { ArrowRightIcon, InfoIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import ServerError from "~/components/global/server-error";
 import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
 import { Separator } from "~/components/ui/separator";
 import {
   Tooltip,
@@ -78,10 +84,10 @@ function NotFound() {
 
 async function LeadsCard(props: { agencyId: string }) {
   const leads = (
-    await api.accounts.getByAgencyId({
+    await api.projects.getByAgencyId({
       agencyId: props.agencyId,
     })
-  )?.filter((account) => account.stage === "LEAD");
+  )?.filter((project) => project.stage === "LEAD");
 
   return (
     <Card className="flex-1 rounded-sm shadow">
@@ -106,29 +112,40 @@ async function LeadsCard(props: { agencyId: string }) {
       <Separator />
       <CardContent className="p-0 sm:min-h-80">
         {!leads && <NotFound />}
-        {leads?.map((account) => {
+        {leads?.map((project) => {
           return (
-            <div
-              key={account.id}
-              className="flex cursor-pointer justify-between p-3 transition-all ease-in-out hover:bg-secondary"
+            <Link
+              key={project.id}
+              href={`/studio/project/${project.id}`}
+              passHref
             >
-              <div className="flex flex-col space-y-1">
-                <p className="text-sm">{account.name}</p>
-                <p className="text-xs text-muted-foreground">
-                  {account.eventLocation}
+              <div className="flex cursor-pointer justify-between p-3 transition-all ease-in-out hover:bg-secondary">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm">{project.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {project.eventLocation}
+                  </p>
+                </div>
+                <p className="my-auto text-xs text-muted-foreground">
+                  {project.eventDate.toLocaleDateString("en-us", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}
                 </p>
               </div>
-              <p className="text-xs text-muted-foreground">
-                {account.eventDate.toLocaleDateString("en-us", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                })}
-              </p>
-            </div>
+            </Link>
           );
         })}
       </CardContent>
+      <CardFooter className="p-0">
+        <Link href="/studio/pipeline" passHref>
+          <Button variant="link" className="flex space-x-2">
+            <span>Go to pipeline</span>
+            <ArrowRightIcon size={16} />
+          </Button>
+        </Link>
+      </CardFooter>
     </Card>
   );
 }

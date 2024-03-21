@@ -57,7 +57,7 @@ model Agency {
     colorText       String
     users           User[]
     plan            Plan
-    accounts        Account[]
+    projects        Project[]
     createdAt       DateTime  @default(now())
     updatedAt       DateTime  @updatedAt
 }
@@ -73,12 +73,12 @@ model Contact {
     state     String
     zip       String
     country   String
-    accountId String
-    account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+    projectId String
+    project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    @@index([accountId])
+    @@index([projectId])
 }
 
 enum Stage {
@@ -89,7 +89,7 @@ enum Stage {
     PARTNER
 }
 
-model Account {
+model Project {
     id            String       @id @default(uuid())
     name          String
     email         String       @unique
@@ -118,15 +118,15 @@ enum Role {
 model Permission {
     id        String   @id @default(uuid())
     userId    String
-    accountId String
+    projectId String
     user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+    project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
     role      Role
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
     @@index([userId])
-    @@index([accountId])
+    @@index([projectId])
 }
 
 model Notification {
