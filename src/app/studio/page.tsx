@@ -2,9 +2,10 @@ import { currentUser } from "@clerk/nextjs";
 import { type Agency } from "@prisma/client";
 import Image from "next/image";
 import ServerError from "~/components/global/server-error";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Separator } from "~/components/ui/separator";
 import { api } from "~/trpc/server";
 import greeting from "~/utils/greeting";
-import Navigation from "./_components/studio-navigation";
 
 function DashboardHeader(props: { firstName: string | null; agency?: Agency }) {
   return (
@@ -44,6 +45,32 @@ function DashboardHeader(props: { firstName: string | null; agency?: Agency }) {
         </div>
       )}
     </div>
+  );
+}
+
+function LeadsCard(props: { agency?: Agency }) {
+  return (
+    <Card className="flex-1 rounded-sm shadow sm:min-h-96">
+      <CardHeader>
+        <CardTitle>Leads</CardTitle>
+      </CardHeader>
+      <Separator />
+      <CardContent></CardContent>
+    </Card>
+  );
+}
+
+function ActivityCard(props: { agency?: Agency }) {
+  return (
+    <Card className="flex-1 rounded-sm shadow sm:min-h-96">
+      <CardHeader>
+        <CardTitle>Activity</CardTitle>
+      </CardHeader>
+      <Separator />
+      <CardContent>
+        <p className="text-muted-foreground">New message from God.</p>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -91,14 +118,12 @@ export default async function Studio() {
 
   return (
     <>
-      <Navigation user={user} />
-      <div className="mx-auto my-3 flex max-w-4xl flex-col space-y-3">
-        <DashboardHeader
-          firstName={user.firstName}
-          agency={userFromDb.agency}
-        />
-        {/* <pre>{JSON.stringify(userFromDb, null, "\t")}</pre> */}
+      <DashboardHeader firstName={user.firstName} agency={userFromDb.agency} />
+      <div className="flex flex-col gap-5 sm:flex-row">
+        <LeadsCard agency={userFromDb.agency} />
+        <ActivityCard agency={userFromDb.agency} />
       </div>
+      <pre>{JSON.stringify(userFromDb, null, "\t")}</pre>
     </>
   );
 }

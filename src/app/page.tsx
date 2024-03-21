@@ -9,7 +9,7 @@ import VisualFeatures from "./_components/visual-features";
 
 export default async function Home() {
   return (
-    <div className="h-full w-full">
+    <>
       <Navigation />
       <Hero />
       {/* <HeroParallaxDemo /> */}
@@ -19,6 +19,6 @@ export default async function Home() {
       <Testimonial />
       <CTA />
       <Footer />
-    </div>
+    </>
   );
 }

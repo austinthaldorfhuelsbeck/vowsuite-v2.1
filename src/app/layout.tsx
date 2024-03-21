@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "next-themes";
+import Footer from "~/components/global/footer";
 import { TRPCReactProvider } from "~/trpc/react";
 
 const inter = Inter({
@@ -33,7 +34,12 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <TRPCReactProvider>{children}</TRPCReactProvider>
+            <TRPCReactProvider>
+              <>
+                {children}
+                <Footer />
+              </>
+            </TRPCReactProvider>
           </ThemeProvider>
         </ClerkProvider>
       </body>

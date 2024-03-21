@@ -1,14 +1,27 @@
-import { type User } from "@prisma/client";
+import { type Agency, type User } from "@prisma/client";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
 
+const addAccountDataToAgency = async (agency?: Agency) => {
+  const accounts = await db.account.findMany({
+    where: { agencyId: agency?.id },
+  });
+
+  return {
+    ...agency,
+    accounts,
+  } as Agency;
+};
+
 const addAgencyDataToUser = async (user: User) => {
-  const agency =
+  const agencyFromDb =
     (await db.agency.findFirst({
       where: { id: user.agencyId ?? undefined },
     })) ?? undefined;
+
+  const agency = await addAccountDataToAgency(agencyFromDb);
 
   return {
     ...user,
@@ -40,7 +53,7 @@ export const userRouter = createTRPCRouter({
 
       return await addAgencyDataToUser(user);
     }),
-  
+
   addAgency: publicProcedure
     .input(z.object({ userId: z.string(), agencyId: z.string() }))
     .mutation(async ({ input, ctx }) => {
