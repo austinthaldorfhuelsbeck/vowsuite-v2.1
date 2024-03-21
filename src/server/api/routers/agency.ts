@@ -1,6 +1,19 @@
+import { type Agency } from "@prisma/client";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { db } from "~/server/db";
+
+const addAccountDataToAgency = async (agency: Agency) => {
+  const accounts = await db.account.findMany({
+    where: { agencyId: agency.id },
+  });
+
+  return {
+    ...agency,
+    accounts,
+  };
+};
 
 export const agencyRouter = createTRPCRouter({
   createByUser: publicProcedure
@@ -20,6 +33,6 @@ export const agencyRouter = createTRPCRouter({
         },
       });
 
-      return agency;
+      return addAccountDataToAgency(agency);
     }),
 });
