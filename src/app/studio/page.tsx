@@ -1,12 +1,13 @@
 import { currentUser } from "@clerk/nextjs";
-import Navigation from "~/components/global/navigation";
 import ServerError from "~/components/global/server-error";
-import PageWrapper from "~/layouts/page-wrapper";
+import { api } from "~/trpc/server";
+import Sidebar from "./_components/sidebar";
 
 export default async function Studio() {
   const user = await currentUser();
+  const userEmail = user?.emailAddresses[0]?.emailAddress;
 
-  if (!user?.emailAddresses[0]?.emailAddress)
+  if (!userEmail)
     return (
       <ServerError
         code={500}
@@ -14,23 +15,28 @@ export default async function Studio() {
       />
     );
 
-  // const userFromDb = await api.user.getByEmail({
-  //   email: user?.emailAddresses[0]?.emailAddress,
-  // });
+  const loadOrCreateUser = async (email: string) => {
+    const userResponse = await api.user.getByEmail({
+      email,
+    });
+
+    if (!userResponse) {
+      const newUserResponse = await api.user.createByEmail({
+        email,
+      });
+      return newUserResponse;
+    }
+
+    return userResponse;
+  };
+
+  const userFromDb = await loadOrCreateUser(userEmail);
 
   return (
-    <PageWrapper>
-      <Navigation
-        user={{
-          avatar: user?.imageUrl,
-          firstName: user?.firstName ?? undefined,
-          lastName: user?.lastName ?? undefined,
-        }}
-      />
-      <div className="mb-3 flex flex-col p-3 sm:flex-row">
-        {/* <Sidebar user={userFromDb} /> */}
+    <>
+      <Sidebar user={userFromDb} />
 
-        {/* {!userFromDb && (
+      {/* {!userFromDb && (
           <NewUserForm
             user={{
               firstName: user.externalAccounts[0]?.firstName,
@@ -42,7 +48,6 @@ export default async function Studio() {
         )}
 
         {userFromDb && <AgencyForm />} */}
-      </div>
-    </PageWrapper>
+    </>
   );
 }

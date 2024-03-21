@@ -21,10 +21,7 @@ model Post {
 
 model User {
     id           String         @id @default(uuid())
-    firstName    String
-    lastName     String
     email        String         @unique
-    avatar       String?
     agencyId     String?
     agency       Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
     permissions  Permission[]

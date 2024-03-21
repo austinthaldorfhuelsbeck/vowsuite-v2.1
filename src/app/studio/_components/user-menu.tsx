@@ -1,7 +1,7 @@
 "use client";
 
 import { SignOutButton } from "@clerk/nextjs";
-import { type User } from "@prisma/client";
+import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
   DropdownMenu,
@@ -17,18 +17,24 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 
-const UserAvatar = (props: { user?: Partial<User> }) => {
+type UserMenuProps = {
+  avatar?: string;
+  firstName?: string;
+  lastName?: string;
+};
+
+const UserAvatar = (props: UserMenuProps) => {
   return (
     <Avatar>
-      <AvatarImage src={props.user?.avatar ?? undefined} alt="Profile Image" />
+      <AvatarImage src={props.avatar ?? undefined} alt="Profile Image" />
       <AvatarFallback>
-        {`${props.user?.firstName?.[0] ?? ""}${props.user?.lastName?.[0] ?? ""}`.toUpperCase()}
+        {`${props.firstName?.[0] ?? ""}${props.lastName?.[0] ?? ""}`.toUpperCase()}
       </AvatarFallback>
     </Avatar>
   );
 };
 
-const UserMenu = (props: { user?: Partial<User> }) => {
+const UserMenu = (props: UserMenuProps) => {
   // const { signOut } = useClerk();
   // const router = useRouter();
   // const onLogout = () => signOut(() => router.push("/"));
@@ -38,24 +44,25 @@ const UserMenu = (props: { user?: Partial<User> }) => {
       <DropdownMenu>
         <div>
           <DropdownMenuTrigger>
-            <UserAvatar user={props.user} />
+            <UserAvatar {...props} />
           </DropdownMenuTrigger>
         </div>
         <DropdownMenuContent className="mr-5 w-56">
           <DropdownMenuLabel className="font-bold">
-            {props.user && (
+            {props.avatar && (
               <div className="flex space-x-3">
-                {props.user?.avatar && <UserAvatar user={props.user} />}
+                {props.avatar && <UserAvatar {...props} />}
                 <span>
-                  {`${props.user?.firstName} ${props.user?.lastName}` ??
-                    "Vowsuite User"}
+                  {`${props.firstName} ${props.lastName}` ?? "Vowsuite User"}
                 </span>
               </div>
             )}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>Profile Settings</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/studio/profile-settings">Profile Settings</Link>
+            </DropdownMenuItem>
             <DropdownMenuItem>Agency Settings</DropdownMenuItem>
           </DropdownMenuGroup>
 

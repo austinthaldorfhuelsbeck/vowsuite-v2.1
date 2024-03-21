@@ -1,18 +1,17 @@
-import { type User } from "@prisma/client";
+import { currentUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import UserMenu from "~/app/studio/_components/user-menu";
 import { navigation } from "~/lib/constants";
 import { Button } from "../ui/button";
 
-const Navigation = (props: { user?: Partial<User> }) => {
+const Navigation = async () => {
+  const user = await currentUser();
+
   return (
     <header className="relative flex items-center justify-between p-4">
       <aside className="px-5">
-        <Link
-          href={props.user ? "/studio" : "/"}
-          className="flex items-center gap-2"
-        >
+        <Link href={user ? "/studio" : "/"} className="flex items-center gap-2">
           <Image
             src={"./assets/logo.svg"}
             alt="Vowsuite"
@@ -23,7 +22,7 @@ const Navigation = (props: { user?: Partial<User> }) => {
         </Link>
       </aside>
 
-      {!props.user && (
+      {!user && (
         <nav className="absolute left-[50%] top-[50%] hidden translate-x-[-50%] translate-y-[-50%] transform md:block">
           <ul className="flex items-center justify-center">
             {navigation.map((item, index) => (
@@ -38,10 +37,16 @@ const Navigation = (props: { user?: Partial<User> }) => {
       )}
 
       <aside className="flex gap-2">
-        {props.user && <UserMenu user={props.user} />}
-        {/* {props.user && <UserButton />} */}
+        {user && (
+          <UserMenu
+            avatar={user.imageUrl}
+            firstName={user.firstName ?? undefined}
+            lastName={user.lastName ?? undefined}
+          />
+        )}
+        {/* {user && <UserButton />} */}
 
-        {!props.user && (
+        {!user && (
           <>
             <Link href="/sign-in">
               <Button variant="ghost">Log in</Button>

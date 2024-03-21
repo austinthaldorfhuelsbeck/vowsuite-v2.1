@@ -1,5 +1,5 @@
+import Footer from "~/components/global/footer";
 import Navigation from "~/components/global/navigation";
-import PageWrapper from "~/layouts/page-wrapper";
 import CTA from "./_components/cta";
 import Features from "./_components/features";
 import Hero from "./_components/hero";
@@ -9,7 +9,7 @@ import VisualFeatures from "./_components/visual-features";
 
 export default async function Home() {
   return (
-    <PageWrapper>
+    <div className="h-full w-full">
       <Navigation />
       <Hero />
       {/* <HeroParallaxDemo /> */}
@@ -18,6 +18,7 @@ export default async function Home() {
       <Features />
       <Testimonial />
       <CTA />
-    </PageWrapper>
+      <Footer />
+    </div>
   );
 }

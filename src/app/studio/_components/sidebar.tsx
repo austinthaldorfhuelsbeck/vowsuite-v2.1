@@ -1,7 +1,8 @@
 "use client";
 
 import { type User } from "@prisma/client";
-import { FolderPlusIcon, MinusIcon, PlusIcon } from "lucide-react";
+import { PersonIcon } from "@radix-ui/react-icons";
+import { MinusIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 
@@ -22,7 +23,7 @@ const Sidebar = ({ user }: SidebarProps) => {
     <aside className="mb-3 w-full rounded-lg border sm:mb-0 sm:mr-3 sm:h-full sm:min-h-96 sm:w-72">
       <nav className="flex flex-col space-y-4 p-4">
         <div className="flex space-x-2">
-          <h1 className="text-xl font-bold">Galleries</h1>
+          <h1 className="text-lg font-bold">Clients</h1>
           {isShowing && (
             <MinusIcon className={toggleButtonClasses} onClick={toggle} />
           )}
@@ -34,8 +35,8 @@ const Sidebar = ({ user }: SidebarProps) => {
         <div className={sidebarContentClasses}>
           <Button disabled={user?.agencyId ? false : true} className="w-full">
             <div className="flex space-x-2">
-              <FolderPlusIcon className="my-auto h-5 w-5" />
-              <span className="my-auto">New Gallery</span>
+              <PersonIcon className="my-auto h-5 w-5" />
+              <span className="my-auto">New Client</span>
             </div>
           </Button>
         </div>
