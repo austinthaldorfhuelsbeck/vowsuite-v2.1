@@ -1,8 +1,7 @@
-import { useClerk } from "@clerk/nextjs";
+"use client";
 
 import { type User } from "@prisma/client";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,9 +17,9 @@ import {
 } from "~/components/ui/dropdown-menu";
 
 const UserMenu = (props: { user?: Partial<User> }) => {
-  const { signOut } = useClerk();
-  const router = useRouter();
-  const onLogout = () => signOut(() => router.push("/"));
+  // const { signOut } = useClerk();
+  // const router = useRouter();
+  // const onLogout = () => signOut(() => router.push("/"));
 
   return (
     <div className="ml-auto text-right">
@@ -79,7 +78,9 @@ const UserMenu = (props: { user?: Partial<User> }) => {
           </DropdownMenuGroup>
 
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={onLogout}>Log out</DropdownMenuItem>
+          <DropdownMenuItem onClick={(e) => e.preventDefault()}>
+            Log out
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

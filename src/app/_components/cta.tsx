@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { type FC } from "react";
 import { Button } from "~/components/ui/button";
 import AnimateWrapper from "~/layouts/animate-wrapper";
@@ -5,7 +6,7 @@ import GradientWrapper from "~/layouts/gradient-wrapper";
 
 const CTA: FC = () => (
   <section>
-    <GradientWrapper wrapperClassName="max-w-xs h-[13rem] top-12 inset-0">
+    <GradientWrapper wrapperClasses="max-w-xs h-[13rem] top-12 inset-0">
       <div className="custom-screen relative py-28">
         <AnimateWrapper>
           <div className="relative z-10">
@@ -20,18 +21,12 @@ const CTA: FC = () => (
               </p>
             </div>
             <div className="mt-5 flex justify-center text-sm font-medium">
-              <Button variant="secondary">Start free trial →</Button>
+              <Link href="/studio">
+                <Button variant="secondary">Start free trial →</Button>
+              </Link>
             </div>
           </div>
         </AnimateWrapper>
-
-        {/* <Image
-          src="/images/bg-pattern.webp"
-          className="pointer-events-none absolute inset-0 m-auto h-full w-full object-cover"
-          alt="Background pattern"
-          width={500}
-          height={500}
-        /> */}
       </div>
     </GradientWrapper>
   </section>

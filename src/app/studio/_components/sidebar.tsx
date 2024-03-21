@@ -1,7 +1,9 @@
+"use client";
+
 import { type User } from "@prisma/client";
 import { FolderPlusIcon, MinusIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
-import { Button } from "./ui/button";
+import { Button } from "~/components/ui/button";
 
 type SidebarProps = {
   user?: User;

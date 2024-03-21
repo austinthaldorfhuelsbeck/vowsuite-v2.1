@@ -1,7 +1,7 @@
+import { UserButton } from "@clerk/nextjs";
 import { type User } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
-import UserMenu from "~/app/studio/_components/user-menu";
 import { navigation } from "~/lib/constants";
 import { Button } from "../ui/button";
 
@@ -38,7 +38,9 @@ const Navigation = (props: { user?: Partial<User> }) => {
       )}
 
       <aside className="flex gap-2">
-        {props.user && <UserMenu user={props.user} />}
+        {/* {props.user && <UserMenu user={props.user} />} */}
+        {props.user && <UserButton />}
+
         {!props.user && (
           <>
             <Link href="/studio">

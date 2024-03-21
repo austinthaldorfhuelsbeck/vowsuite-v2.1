@@ -13,7 +13,7 @@ const Testimonial = () => (
         </h2>
       </div>
       <GradientWrapper
-        wrapperClassName="max-w-sm h-40 top-12 inset-x-0"
+        wrapperClasses="max-w-sm h-40 top-12 inset-x-0"
         className="mt-12"
       >
         <AnimateWrapper>

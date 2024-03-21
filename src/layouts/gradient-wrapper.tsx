@@ -2,12 +2,12 @@ import type { PropsWithChildren } from "react";
 
 type Props = {
   className?: string;
-  wrapperClassName?: string;
+  wrapperClasses?: string;
 };
 const GradientWrapper = (props: PropsWithChildren<Props>) => (
   <div {...props} className={`relative ${props.className ?? ""}`}>
     <div
-      className={`absolute m-auto hidden blur-[160px] dark:inline-block ${props.wrapperClassName ?? ""}`}
+      className={`absolute m-auto hidden blur-[160px] dark:inline-block ${props.wrapperClasses ?? ""}`}
       style={{
         background:
           "linear-gradient(180deg, #FFBE98 0%, rgba(255, 190, 152, 0.684375) 0.01%, rgba(255, 190, 152, 0.2) 100%)",
