@@ -1,6 +1,5 @@
-"use client";
-
 import { SignOutButton } from "@clerk/nextjs";
+import { type User } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
@@ -17,16 +16,10 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 
-type UserMenuProps = {
-  avatar?: string;
-  firstName?: string;
-  lastName?: string;
-};
-
-const UserAvatar = (props: UserMenuProps) => {
+const UserAvatar = (props: Partial<User>) => {
   return (
     <Avatar>
-      <AvatarImage src={props.avatar ?? undefined} alt="Profile Image" />
+      <AvatarImage src={props.imageUrl ?? undefined} alt="Profile Image" />
       <AvatarFallback>
         {`${props.firstName?.[0] ?? ""}${props.lastName?.[0] ?? ""}`.toUpperCase()}
       </AvatarFallback>
@@ -34,62 +27,55 @@ const UserAvatar = (props: UserMenuProps) => {
   );
 };
 
-const UserMenu = (props: UserMenuProps) => {
-  // const { signOut } = useClerk();
-  // const router = useRouter();
-  // const onLogout = () => signOut(() => router.push("/"));
+const UserMenu = (props: { user: Partial<User> }) => (
+  <DropdownMenu>
+    <DropdownMenuTrigger>
+      <UserAvatar {...props.user} />
+    </DropdownMenuTrigger>
+    <DropdownMenuContent className="mr-5 w-56">
+      <DropdownMenuLabel className="font-bold">
+        {props.user.imageUrl && (
+          <div className="flex space-x-3">
+            {props.user.imageUrl && <UserAvatar {...props.user} />}
+            <span>
+              {`${props.user.firstName} ${props.user.lastName}` ??
+                "Vowsuite User"}
+            </span>
+          </div>
+        )}
+      </DropdownMenuLabel>
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
+        <DropdownMenuItem>
+          <Link href="/studio/profile-settings">Profile Settings</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link href="/studio/agency-settings">Agency Settings</Link>
+        </DropdownMenuItem>
+      </DropdownMenuGroup>
 
-  return (
-    <div className="ml-auto text-right">
-      <DropdownMenu>
-        <div>
-          <DropdownMenuTrigger>
-            <UserAvatar {...props} />
-          </DropdownMenuTrigger>
-        </div>
-        <DropdownMenuContent className="mr-5 w-56">
-          <DropdownMenuLabel className="font-bold">
-            {props.avatar && (
-              <div className="flex space-x-3">
-                {props.avatar && <UserAvatar {...props} />}
-                <span>
-                  {`${props.firstName} ${props.lastName}` ?? "Vowsuite User"}
-                </span>
-              </div>
-            )}
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <Link href="/studio/profile-settings">Profile Settings</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>Agency Settings</DropdownMenuItem>
-          </DropdownMenuGroup>
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
+        <DropdownMenuItem>Team</DropdownMenuItem>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem>Email</DropdownMenuItem>
+              <DropdownMenuItem>Message</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>More...</DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
+      </DropdownMenuGroup>
 
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>Team</DropdownMenuItem>
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuSubContent>
-                  <DropdownMenuItem>Email</DropdownMenuItem>
-                  <DropdownMenuItem>Message</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>More...</DropdownMenuItem>
-                </DropdownMenuSubContent>
-              </DropdownMenuPortal>
-            </DropdownMenuSub>
-          </DropdownMenuGroup>
-
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <SignOutButton>Log out</SignOutButton>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
-  );
-};
+      <DropdownMenuSeparator />
+      <DropdownMenuItem>
+        <SignOutButton>Log out</SignOutButton>
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+);
 
 export default UserMenu;

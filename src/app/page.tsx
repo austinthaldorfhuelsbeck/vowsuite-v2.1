@@ -1,5 +1,5 @@
+import Navigation from "~/app/_components/app-navigation";
 import Footer from "~/components/global/footer";
-import Navigation from "~/components/global/navigation";
 import CTA from "./_components/cta";
 import Features from "./_components/features";
 import Hero from "./_components/hero";

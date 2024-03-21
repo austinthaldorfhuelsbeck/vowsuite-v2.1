@@ -1,6 +1,20 @@
+import { type User } from "@prisma/client";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { db } from "~/server/db";
+
+const addAgencyDataToUser = async (user: User) => {
+  const agency =
+    (await db.agency.findFirst({
+      where: { id: user.agencyId ?? undefined },
+    })) ?? undefined;
+
+  return {
+    ...user,
+    agency,
+  };
+};
 
 export const userRouter = createTRPCRouter({
   getByEmail: publicProcedure
@@ -12,7 +26,7 @@ export const userRouter = createTRPCRouter({
 
       if (!user) return undefined;
 
-      return user;
+      return await addAgencyDataToUser(user);
     }),
 
   createByEmail: publicProcedure
@@ -24,6 +38,6 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      return user;
+      return await addAgencyDataToUser(user);
     }),
 });

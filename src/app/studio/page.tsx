@@ -1,7 +1,7 @@
 import { currentUser } from "@clerk/nextjs";
 import ServerError from "~/components/global/server-error";
 import { api } from "~/trpc/server";
-import Sidebar from "./_components/sidebar";
+import Navigation from "./_components/studio-navigation";
 
 export default async function Studio() {
   const user = await currentUser();
@@ -15,6 +15,8 @@ export default async function Studio() {
       />
     );
 
+  // This function will load the user from the database if it exists, or create it if it doesn't
+  // and also create a new agency
   const loadOrCreateUser = async (email: string) => {
     const userResponse = await api.user.getByEmail({
       email,
@@ -34,20 +36,8 @@ export default async function Studio() {
 
   return (
     <>
-      <Sidebar user={userFromDb} />
-
-      {/* {!userFromDb && (
-          <NewUserForm
-            user={{
-              firstName: user.externalAccounts[0]?.firstName,
-              lastName: user.externalAccounts[0]?.lastName,
-              email: user.emailAddresses[0]?.emailAddress,
-              avatar: user.imageUrl,
-            }}
-          />
-        )}
-
-        {userFromDb && <AgencyForm />} */}
+      <Navigation user={user} />
+      <pre>{JSON.stringify(userFromDb, null, "\t")}</pre>
     </>
   );
 }
