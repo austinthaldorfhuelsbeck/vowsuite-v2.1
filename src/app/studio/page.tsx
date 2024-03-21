@@ -1,9 +1,18 @@
 import { currentUser } from "@clerk/nextjs";
 import { type Agency } from "@prisma/client";
+import { InfoIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import ServerError from "~/components/global/server-error";
+import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Separator } from "~/components/ui/separator";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 import { api } from "~/trpc/server";
 import greeting from "~/utils/greeting";
 
@@ -48,27 +57,103 @@ function DashboardHeader(props: { firstName: string | null; agency?: Agency }) {
   );
 }
 
-function LeadsCard(props: { agency?: Agency }) {
+function NotFound() {
   return (
-    <Card className="flex-1 rounded-sm shadow sm:min-h-96">
+    <div className="mt-5 flex flex-col items-center space-y-3">
+      <Image
+        src="/images/well-done.svg"
+        width={125}
+        height={125}
+        alt="Relaxing with balloons, leaning on an empty notifications window"
+      />
+      <p className="text-center text-sm text-muted-foreground">
+        You&#39;ve handled everything. <br /> Treat yourself 🍰
+      </p>
+      <Link href="/studio/pipeline">
+        <Button variant="link">Show all</Button>
+      </Link>
+    </div>
+  );
+}
+
+async function LeadsCard(props: { agencyId: string }) {
+  const leads = (
+    await api.accounts.getByAgencyId({
+      agencyId: props.agencyId,
+    })
+  )?.filter((account) => account.stage === "LEAD");
+
+  return (
+    <Card className="flex-1 rounded-sm shadow">
       <CardHeader>
-        <CardTitle>Leads</CardTitle>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <CardTitle className="flex space-x-2">
+                <span>Leads</span>
+                <InfoIcon size={16} className="my-auto" />
+              </CardTitle>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>
+                Leads are potential clients who have shown interest through lead
+                forms.
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </CardHeader>
       <Separator />
-      <CardContent></CardContent>
+      <CardContent className="p-0 sm:min-h-80">
+        {!leads && <NotFound />}
+        {leads?.map((account) => {
+          return (
+            <div
+              key={account.id}
+              className="flex cursor-pointer justify-between p-3 transition-all ease-in-out hover:bg-secondary"
+            >
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm">{account.name}</p>
+                <p className="text-xs text-muted-foreground">
+                  {account.eventLocation}
+                </p>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {account.eventDate.toLocaleDateString("en-us", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
+              </p>
+            </div>
+          );
+        })}
+      </CardContent>
     </Card>
   );
 }
 
-function ActivityCard(props: { agency?: Agency }) {
+function ActivityCard(props: { agencyId: string }) {
   return (
-    <Card className="flex-1 rounded-sm shadow sm:min-h-96">
+    <Card className="flex-1 rounded-sm shadow">
       <CardHeader>
-        <CardTitle>Activity</CardTitle>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <CardTitle className="flex space-x-2">
+                <span>Messages</span>
+                <InfoIcon size={16} className="my-auto" />
+              </CardTitle>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Unread messages from your clients will appear here.</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </CardHeader>
       <Separator />
-      <CardContent>
-        <p className="text-muted-foreground">New message from God.</p>
+      <CardContent className="p-0 sm:min-h-80">
+        <NotFound />
       </CardContent>
     </Card>
   );
@@ -120,10 +205,14 @@ export default async function Studio() {
     <>
       <DashboardHeader firstName={user.firstName} agency={userFromDb.agency} />
       <div className="flex flex-col gap-5 sm:flex-row">
-        <LeadsCard agency={userFromDb.agency} />
-        <ActivityCard agency={userFromDb.agency} />
+        {userFromDb.agencyId && (
+          <>
+            <LeadsCard agencyId={userFromDb.agencyId} />
+            <ActivityCard agencyId={userFromDb.agencyId} />
+          </>
+        )}
       </div>
-      <pre>{JSON.stringify(userFromDb, null, "\t")}</pre>
+      {/* <pre>{JSON.stringify(userFromDb, null, "\t")}</pre> */}
     </>
   );
 }
