@@ -43,13 +43,13 @@ model Agency {
     name            String
     avatar          String
     email           String    @unique
-    website         String
-    facebook        String
-    twitter         String
-    instagram       String
-    tiktok          String
-    youtube         String
-    vimeo           String
+    website         String?
+    facebook        String?
+    twitter         String?
+    instagram       String?
+    tiktok          String?
+    youtube         String?
+    vimeo           String?
     fontPrimary     String
     fontSecondary   String
     colorAccent     String

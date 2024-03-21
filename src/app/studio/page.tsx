@@ -26,7 +26,18 @@ export default async function Studio() {
       const newUserResponse = await api.user.createByEmail({
         email,
       });
-      return newUserResponse;
+
+      const newAgencyResponse = await api.agency.createByUser({
+        firstName: user.firstName ?? "New User",
+        email,
+      });
+
+      const updatedUserResponse = await api.user.addAgency({
+        userId: newUserResponse.id,
+        agencyId: newAgencyResponse.id,
+      });
+
+      return updatedUserResponse;
     }
 
     return userResponse;

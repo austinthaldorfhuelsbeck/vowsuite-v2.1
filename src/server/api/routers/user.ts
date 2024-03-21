@@ -40,4 +40,17 @@ export const userRouter = createTRPCRouter({
 
       return await addAgencyDataToUser(user);
     }),
+  
+  addAgency: publicProcedure
+    .input(z.object({ userId: z.string(), agencyId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const user = await ctx.db.user.update({
+        where: { id: input.userId },
+        data: {
+          agencyId: input.agencyId,
+        },
+      });
+
+      return await addAgencyDataToUser(user);
+    }),
 });
