@@ -20,7 +20,7 @@ import { api } from "~/trpc/server";
 
 function NotFound() {
   return (
-    <div className="flex flex-col items-center space-y-3">
+    <div className="my-10 flex flex-col items-center space-y-3">
       <Image
         src="/images/well-done.svg"
         width={125}
@@ -30,9 +30,6 @@ function NotFound() {
       <p className="text-center text-sm text-muted-foreground">
         You&#39;ve handled everything. <br /> Great job! 🎉
       </p>
-      <Link href="/studio/pipeline">
-        <Button variant="link">Show all</Button>
-      </Link>
     </div>
   );
 }
@@ -76,7 +73,7 @@ export default async function LeadsCard(props: { agencyId: string }) {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <CardTitle className="flex space-x-2">
+              <CardTitle className="mr-auto flex space-x-2">
                 <span>{`Leads (${leads?.length})`}</span>
                 <InfoIcon size={16} className="my-auto" />
               </CardTitle>

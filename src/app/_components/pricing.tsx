@@ -15,7 +15,7 @@ const Pricing = () => (
     </div>
 
     <AnimateWrapper>
-      <div className="mt-16 justify-center gap-6 sm:grid sm:grid-cols-2 sm:space-y-0 lg:grid-cols-3">
+      <div className="my-10 justify-center gap-6 sm:grid sm:grid-cols-2 sm:space-y-0 lg:grid-cols-3">
         {pricingPlans.map((item, idx) => (
           <div
             key={idx}

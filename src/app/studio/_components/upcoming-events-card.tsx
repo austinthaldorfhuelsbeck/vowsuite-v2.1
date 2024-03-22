@@ -21,7 +21,7 @@ import { api } from "~/trpc/server";
 
 function NotFound() {
   return (
-    <div className="flex flex-col items-center space-y-3">
+    <div className="my-10 flex flex-col items-center space-y-3">
       <Image
         src="/images/walking-outside.svg"
         width={125}
@@ -29,7 +29,7 @@ function NotFound() {
         alt="Walking outside with trees, birds, and a sun in the background"
       />
       <p className="text-center text-sm text-muted-foreground">
-        There are no upcoming events. <br /> Take a victory lap 🏃‍♀
+        There are no upcoming events. <br /> Let&#39;s find more clients! 🏃‍♀
       </p>
     </div>
   );
@@ -74,7 +74,7 @@ export default async function UpcomingEventsCard(props: { agencyId: string }) {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <CardTitle className="flex space-x-2">
+              <CardTitle className="mr-auto flex space-x-2">
                 <span>{`Upcoming Events (${upcomingEvents?.length ?? 0})`}</span>
                 <InfoIcon size={16} className="my-auto" />
               </CardTitle>

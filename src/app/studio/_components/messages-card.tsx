@@ -21,7 +21,7 @@ import { api } from "~/trpc/server";
 
 function NotFound() {
   return (
-    <div className="flex flex-col items-center space-y-3">
+    <div className="my-10 flex flex-col items-center space-y-3">
       <Image
         src="/images/done-checking.svg"
         width={125}
@@ -84,7 +84,7 @@ export default async function MessagesCard(props: { agencyId: string }) {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <CardTitle className="flex space-x-2">
+              <CardTitle className="mr-auto flex space-x-2">
                 <span>{`Messages (${unreadMessages?.length ?? 0})`}</span>
                 <InfoIcon size={16} className="my-auto" />
               </CardTitle>

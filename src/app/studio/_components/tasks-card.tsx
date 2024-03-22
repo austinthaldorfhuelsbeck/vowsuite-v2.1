@@ -27,7 +27,7 @@ export default async function TasksCard(props: { agencyId: string }) {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <CardTitle className="flex space-x-2">
+              <CardTitle className="mr-auto flex space-x-2">
                 <span>{`Tasks (${tasks?.length ?? 0})`}</span>
                 <InfoIcon size={16} className="my-auto" />
               </CardTitle>
