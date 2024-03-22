@@ -69,7 +69,7 @@ export default async function UpcomingEventsCard(props: { agencyId: string }) {
     .filter((event) => event?.date && event.date > new Date());
 
   return (
-    <Card className="rounded-sm shadow">
+    <Card className="h-full rounded-sm shadow">
       <CardHeader>
         <TooltipProvider>
           <Tooltip>
@@ -87,12 +87,12 @@ export default async function UpcomingEventsCard(props: { agencyId: string }) {
       </CardHeader>
       <Separator />
       {upcomingEvents?.length === 0 && (
-        <CardContent className="flex items-center justify-center p-0 sm:min-h-64">
+        <CardContent className="flex items-center justify-center p-0">
           <NotFound />
         </CardContent>
       )}
       {upcomingEvents && upcomingEvents.length > 0 && (
-        <CardContent className="p-0 sm:min-h-64">
+        <CardContent className="p-0">
           {upcomingEvents.map((event) => {
             // return <EventMenuItem key={event.id} eventId={event.id} />;
             return event && <EventMenuItem key={event.id} event={event} />;

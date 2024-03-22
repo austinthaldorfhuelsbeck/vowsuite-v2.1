@@ -8,9 +8,7 @@ export default function StudioLayout({
   return (
     <>
       <Navigation />
-      <div className="mx-auto my-5 flex max-w-4xl flex-col space-y-5 px-5 xl:max-w-7xl">
-        {children}
-      </div>
+      <div className="mx-auto my-5 max-w-4xl px-5 xl:max-w-7xl">{children}</div>
     </>
   );
 }

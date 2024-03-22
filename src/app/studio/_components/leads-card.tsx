@@ -71,7 +71,7 @@ export default async function LeadsCard(props: { agencyId: string }) {
   )?.filter((project) => project.stage === "LEAD");
 
   return (
-    <Card className="rounded-sm shadow">
+    <Card className="h-full rounded-sm shadow">
       <CardHeader>
         <TooltipProvider>
           <Tooltip>
@@ -92,12 +92,12 @@ export default async function LeadsCard(props: { agencyId: string }) {
       </CardHeader>
       <Separator />
       {leads?.length === 0 && (
-        <CardContent className="flex items-center justify-center p-0 sm:min-h-64">
+        <CardContent className="flex items-center justify-center p-0">
           <NotFound />
         </CardContent>
       )}
       {leads && leads.length > 0 && (
-        <CardContent className="p-0 sm:min-h-64">
+        <CardContent className="p-0">
           {leads.map((project) => {
             return <LeadMenuItem key={project.id} projectId={project.id} />;
           })}

@@ -1,26 +1,19 @@
 import { currentUser } from "@clerk/nextjs";
 import { type Agency } from "@prisma/client";
-import { PersonIcon } from "@radix-ui/react-icons";
-import {
-  BadgeDollarSignIcon,
-  BriefcaseBusinessIcon,
-  FolderPenIcon,
-  InfoIcon,
-} from "lucide-react";
+import { type LucideIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import ServerError from "~/components/global/server-error";
-import { Card, CardContent } from "~/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
+import { Card, CardContent, CardHeader } from "~/components/ui/card";
+import { createCardConfig, exploreCardConfig } from "~/lib/constants";
 import { api } from "~/trpc/server";
 import greeting from "~/utils/greeting";
 import LeadsCard from "./_components/leads-card";
 import MessagesCard from "./_components/messages-card";
+import MobileAppAlert from "./_components/mobile-app-alert";
+import PaymentsCard from "./_components/payments-card";
+import StatsCard from "./_components/stats-card";
+import TasksCard from "./_components/tasks-card";
 import UpcomingEventsCard from "./_components/upcoming-events-card";
 
 function DashboardHeader(props: { firstName: string | null; agency?: Agency }) {
@@ -66,96 +59,31 @@ function DashboardHeader(props: { firstName: string | null; agency?: Agency }) {
   );
 }
 
-async function StatsCard(props: { agencyId: string }) {
-  const projects = await api.projects.getByAgencyId({
-    agencyId: props.agencyId,
-  });
-  const leads = projects?.filter((project) => project.stage === "LEAD");
-  const unreadMessages = projects
-    ?.flatMap((project) => project.messages)
-    .filter((message) => !message.read);
-
-  const stats = [
-    {
-      title: "New leads",
-      tooltipContent:
-        "Leads are potential clients who have shown interest through lead forms.",
-      value: leads?.length ?? 0,
-    },
-    {
-      title: "Unread messages",
-      tooltipContent: "Unread messages from your projects.",
-      value: unreadMessages?.length ?? 0,
-    },
-    {
-      title: "Draft collections",
-      tooltipContent:
-        "Collections that you are still working on and haven't published yet.",
-      value: 0,
-    },
-    {
-      title: `${new Date().getFullYear()} bookings`,
-      isCurrency: true,
-      tooltipContent:
-        "Total invoiced amount of all projects converted to booked status this year. Includes taxes and discounts.",
-      value: 0,
-    },
-  ];
-
+function LinksCard(props: {
+  title: string;
+  links: { title: string; href: string; icon: LucideIcon }[];
+}) {
   return (
-    <Card className="hidden rounded-sm shadow md:inline-block">
-      <CardContent className="flex items-center justify-between divide-x px-0 py-5">
-        {stats.map((stat, idx) => (
-          <div key={idx} className="mt-0 flex flex-1 flex-col items-center">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <p className="flex space-x-2 text-sm text-muted-foreground">
-                    <span>{stat.title}</span>
-                    <InfoIcon size={16} className="my-auto" />
-                  </p>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{stat.tooltipContent}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <h2 className="text-4xl font-bold">
-              {stat.isCurrency && "$"}
-              {stat.value}
-            </h2>
-          </div>
-        ))}
-      </CardContent>
-    </Card>
-  );
-}
-
-function CreateCard() {
-  const cards = [
-    { title: "New lead", icon: PersonIcon },
-    { title: "New project", icon: BriefcaseBusinessIcon },
-    { title: "New collection", icon: FolderPenIcon },
-    { title: "New invoice", icon: BadgeDollarSignIcon },
-  ];
-
-  return (
-    <Card className="h-52 rounded-sm shadow">
+    <Card className="rounded-sm shadow">
+      <CardHeader className="px-3 pb-0 pt-2">
+        <h2 className="text-lg font-bold">{props.title}</h2>
+      </CardHeader>
       <CardContent className="grid h-full grid-cols-2 gap-3 p-3">
-        {cards.map((card, idx) => (
-          <Card
-            key={idx}
-            className="flex cursor-pointer flex-col items-center justify-center gap-1 text-sm transition-all ease-in-out hover:bg-muted"
-          >
-            <card.icon className="h-4 w-4 text-primary" />
-            <span>{card.title}</span>
-          </Card>
+        {props.links.map((link, idx) => (
+          <Link key={idx} href={link.href}>
+            <Card className="flex min-h-20 cursor-pointer flex-col items-center justify-center gap-1 text-sm transition-all ease-in-out hover:bg-muted">
+              <link.icon className="h-4 w-4 text-primary" />
+              <span>{link.title}</span>
+            </Card>
+          </Link>
         ))}
       </CardContent>
     </Card>
   );
 }
 
+// uses tailwind queries to render three distinct layouts:
+// mobile, tablet, and desktop
 export default async function Studio() {
   const user = await currentUser();
   const userEmail = user?.emailAddresses[0]?.emailAddress ?? "";
@@ -199,16 +127,53 @@ export default async function Studio() {
     );
 
   return (
-    <>
-      <DashboardHeader firstName={user.firstName} agency={userFromDb.agency} />
-      <StatsCard agencyId={userFromDb.agencyId} />
-      <div className="flex flex-col gap-5 sm:grid sm:grid-cols-2 xl:grid-cols-3">
+    <div className="flex flex-col gap-5 sm:grid sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
+      <div className="sm:col-span-2 xl:col-span-3">
+        <DashboardHeader
+          firstName={user.firstName}
+          agency={userFromDb.agency}
+        />
+      </div>
+
+      <div className="inline-block sm:hidden">
+        <MobileAppAlert />
+      </div>
+
+      <div className="mt-0 hidden sm:col-span-2 sm:inline-block xl:col-span-3">
+        <StatsCard agencyId={userFromDb.agencyId} />
+      </div>
+
+      <div className="hidden sm:row-span-2 sm:inline-block">
         <LeadsCard agencyId={userFromDb.agencyId} />
+      </div>
+
+      <div className="hidden sm:row-span-2 sm:inline-block">
         <UpcomingEventsCard agencyId={userFromDb.agencyId} />
-        <CreateCard />
+      </div>
+
+      <div className="sm:row-span-1">
+        <LinksCard {...createCardConfig} />
+      </div>
+
+      <div className="sm:row-span-1 xl:hidden">
+        <LinksCard {...exploreCardConfig} />
+      </div>
+
+      <div className="hidden sm:col-span-2 sm:inline-block xl:col-span-1 xl:row-span-2">
         <MessagesCard agencyId={userFromDb.agencyId} />
       </div>
-      {/* <pre>{JSON.stringify(userFromDb, null, "\t")}</pre> */}
-    </>
+
+      <div className="hidden sm:col-span-1 sm:inline-block xl:col-span-2 xl:row-span-2">
+        <PaymentsCard agencyId={userFromDb.agencyId} />
+      </div>
+
+      <div className="hidden sm:inline-block">
+        <TasksCard agencyId={userFromDb.agencyId} />
+      </div>
+
+      <div className="col-span-3 hidden xl:inline-block">
+        <LinksCard {...exploreCardConfig} />
+      </div>
+    </div>
   );
 }

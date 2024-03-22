@@ -19,6 +19,8 @@ export default function Page() {
           footerActionLink: "text-primary hover:text-primary/80",
         },
       }}
+      afterSignInUrl="/studio"
+      signUpUrl="/sign-up"
     />
   );
 }

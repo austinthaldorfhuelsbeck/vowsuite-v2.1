@@ -1,9 +1,17 @@
 import {
+  BadgeDollarSignIcon,
+  BriefcaseBusinessIcon,
+  CheckCircleIcon,
   CircleFadingPlus,
+  FolderPenIcon,
   ImageUp,
   MessageSquareMore,
+  PaintbrushIcon,
+  ScrollTextIcon,
   Share2,
   ShieldCheck,
+  UserIcon,
+  UsersIcon,
   Wand,
 } from "lucide-react";
 
@@ -151,3 +159,39 @@ export const featuresList = [
     desc: "Easily share your video galleries on social media, expanding your reach and engagement.",
   },
 ];
+
+export const createCardConfig = {
+  title: "Create new",
+  links: [
+    { title: "New lead", icon: UserIcon, href: "/studio/leads/new" },
+    {
+      title: "New project",
+      icon: BriefcaseBusinessIcon,
+      href: "/studio/projects/new",
+    },
+    {
+      title: "New collection",
+      icon: FolderPenIcon,
+      href: "/studio/collections/new",
+    },
+    { title: "New task", icon: CheckCircleIcon, href: "/studio/tasks/new" },
+  ],
+};
+
+export const exploreCardConfig = {
+  title: "Explore",
+  links: [
+    { title: "Team access", icon: UsersIcon, href: "/studio/settings/team" },
+    { title: "Reporting", icon: ScrollTextIcon, href: "/studio/reports" },
+    {
+      title: "Branding",
+      icon: PaintbrushIcon,
+      href: "/studio/settings/agency",
+    },
+    {
+      title: "Invoices",
+      icon: BadgeDollarSignIcon,
+      href: "/studio/invoices",
+    },
+  ],
+};

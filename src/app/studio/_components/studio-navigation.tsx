@@ -16,7 +16,7 @@ function BugReport() {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <BugIcon className="my-auto h-6 w-6 cursor-pointer text-muted-foreground transition-all ease-in-out hover:text-card-foreground" />
+          <BugIcon className="my-auto h-5 w-5 cursor-pointer text-muted-foreground transition-all ease-in-out hover:text-card-foreground" />
         </TooltipTrigger>
         <TooltipContent>
           <p className="text-muted-foreground">
@@ -46,7 +46,7 @@ export default async function Navigation() {
           variant="link"
           className="flex min-w-32 gap-2 rounded-3xl border py-1"
         >
-          <SearchIcon className="my-auto h-6 w-6 text-muted-foreground" />
+          <SearchIcon className="my-auto h-5 w-5 text-muted-foreground" />
           <p className="my-auto text-sm text-muted-foreground">Search...</p>
         </Button>
       </aside>
@@ -55,7 +55,7 @@ export default async function Navigation() {
         <aside className="flex space-x-5">
           <BugReport />
           {/* <NewItemMenu /> */}
-          <BellIcon className="my-auto h-6 w-6 cursor-pointer text-muted-foreground transition-all ease-in-out hover:text-card-foreground" />
+          <BellIcon className="my-auto h-5 w-5 cursor-pointer text-muted-foreground transition-all ease-in-out hover:text-card-foreground" />
           <UserMenu user={user} />
         </aside>
       )}
