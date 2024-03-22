@@ -47,10 +47,10 @@ const UserMenu = (props: { user: Partial<User> }) => (
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
         <DropdownMenuItem>
-          <Link href="/studio/profile-settings">Profile Settings</Link>
+          <Link href="/studio/settings/profile">Profile Settings</Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Link href="/studio/agency-settings">Agency Settings</Link>
+          <Link href="/studio/settings/agency">Agency Settings</Link>
         </DropdownMenuItem>
       </DropdownMenuGroup>
 

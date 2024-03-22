@@ -6,6 +6,7 @@ import { InfoIcon, LightbulbIcon } from "lucide-react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import AgencyCard from "~/app/studio/_components/agency-card";
 import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
 import {
@@ -37,7 +38,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import AgencyCard from "../../_components/agency-card";
 
 const initialFormValues = {
   name: "My Agency",
