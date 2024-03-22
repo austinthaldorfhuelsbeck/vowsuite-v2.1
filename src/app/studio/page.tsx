@@ -12,8 +12,8 @@ import {
 } from "~/components/ui/tooltip";
 import { api } from "~/trpc/server";
 import greeting from "~/utils/greeting";
-import ActivityCard from "./_components/activity-card";
 import LeadsCard from "./_components/leads-card";
+import MessagesCard from "./_components/messages-card";
 
 function DashboardHeader(props: { firstName: string | null; agency?: Agency }) {
   return (
@@ -61,6 +61,9 @@ async function StatsCard(props: { agencyId: string }) {
     agencyId: props.agencyId,
   });
   const leads = projects?.filter((project) => project.stage === "LEAD");
+  const unreadMessages = projects
+    ?.flatMap((project) => project.messages)
+    .filter((message) => !message.read);
 
   const stats = [
     {
@@ -72,7 +75,7 @@ async function StatsCard(props: { agencyId: string }) {
     {
       title: "Unread messages",
       tooltipContent: "Unread messages from your projects.",
-      value: 0,
+      value: unreadMessages?.length ?? 0,
     },
     {
       title: "Draft collections",
@@ -166,7 +169,7 @@ export default async function Studio() {
       <StatsCard agencyId={userFromDb.agencyId} />
       <div className="flex flex-col gap-5 sm:grid sm:grid-cols-2">
         <LeadsCard agencyId={userFromDb.agencyId} />
-        <ActivityCard agencyId={userFromDb.agencyId} />
+        <MessagesCard agencyId={userFromDb.agencyId} />
       </div>
       {/* <pre>{JSON.stringify(userFromDb, null, "\t")}</pre> */}
     </>

@@ -1,6 +1,7 @@
 import { ArrowRightIcon, InfoIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -22,37 +23,43 @@ function NotFound() {
   return (
     <div className="flex flex-col items-center space-y-3">
       <Image
-        src="/images/well-done.svg"
+        src="/images/done-checking.svg"
         width={125}
         height={125}
-        alt="Relaxing with balloons, leaning on an empty notifications window"
+        alt="Looking up at three floating checked tasks"
       />
       <p className="text-center text-sm text-muted-foreground">
-        You&#39;ve handled everything. <br /> Great job! 🎉
+        You&#39;ve read all your messages. <br /> Way to go! 🎉
       </p>
-      <Link href="/studio/pipeline">
-        <Button variant="link">Show all</Button>
-      </Link>
     </div>
   );
 }
 
-async function LeadMenuItem(props: { projectId: string }) {
-  const project = await api.projects.getById({ id: props.projectId });
+async function MessageMenuItem(props: { messageId: string }) {
+  const message = await api.messages.getById({ id: props.messageId });
 
-  if (!project) return null;
+  if (!message?.contact) return null;
 
   return (
-    <Link href={`/studio/project/${project.id}`} passHref>
+    <Link href={`/studio/message/${message.id}`} passHref>
       <div className="flex cursor-pointer justify-between p-3 transition-all ease-in-out hover:bg-secondary">
-        <div className="flex flex-col space-y-1">
-          <p className="text-sm">{project.name}</p>
+        <Avatar className="mr-3">
+          <AvatarImage
+            src={message.contact.avatar ?? undefined}
+            alt="Contact avatar"
+          />
+          <AvatarFallback>
+            {`${message.contact.firstName[0]}${message.contact.lastName[0]}`}
+          </AvatarFallback>
+        </Avatar>
+        <div className="mr-auto flex flex-col space-y-1">
+          <p className="text-sm">{`${message.contact.firstName} ${message.contact.lastName}`}</p>
           <p className="text-xs text-muted-foreground">
-            {project.event?.location}
+            {message.project?.name}
           </p>
         </div>
         <p className="my-auto text-xs text-muted-foreground">
-          {project.event?.date.toLocaleDateString("en-us", {
+          {message.createdAt.toLocaleDateString("en-us", {
             year: "numeric",
             month: "short",
             day: "numeric",
@@ -63,12 +70,13 @@ async function LeadMenuItem(props: { projectId: string }) {
   );
 }
 
-export default async function LeadsCard(props: { agencyId: string }) {
-  const leads = (
-    await api.projects.getByAgencyId({
-      agencyId: props.agencyId,
-    })
-  )?.filter((project) => project.stage === "LEAD");
+export default async function MessagesCard(props: { agencyId: string }) {
+  const projects = await api.projects.getByAgencyId({
+    agencyId: props.agencyId,
+  });
+  const unreadMessages = projects
+    ?.flatMap((project) => project.messages)
+    .filter((message) => !message.read);
 
   return (
     <Card className="rounded-sm shadow">
@@ -77,29 +85,27 @@ export default async function LeadsCard(props: { agencyId: string }) {
           <Tooltip>
             <TooltipTrigger asChild>
               <CardTitle className="flex space-x-2">
-                <span>{`Leads (${leads?.length})`}</span>
+                <span>{`Messages (${unreadMessages?.length ?? 0})`}</span>
                 <InfoIcon size={16} className="my-auto" />
               </CardTitle>
             </TooltipTrigger>
             <TooltipContent>
-              <p>
-                Leads are potential clients who have shown interest through lead
-                forms.
-              </p>
+              <p>Unread messages from your projects.</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </CardHeader>
       <Separator />
-      {leads?.length === 0 && (
+      {unreadMessages?.length === 0 && (
         <CardContent className="flex items-center justify-center p-0 sm:min-h-80">
           <NotFound />
         </CardContent>
       )}
-      {leads && leads.length > 0 && (
+      {unreadMessages && unreadMessages.length > 0 && (
         <CardContent className="p-0 sm:min-h-80">
-          {leads.map((project) => {
-            return <LeadMenuItem key={project.id} projectId={project.id} />;
+          {unreadMessages.map((message) => {
+            // return <MessageMenuItem key={message.id} messageId={message.id} />;
+            return <MessageMenuItem key={message.id} messageId={message.id} />;
           })}
         </CardContent>
       )}

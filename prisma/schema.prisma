@@ -55,15 +55,17 @@ model Contact {
   id        String   @id @default(uuid())
   firstName String
   lastName  String
+  avatar    String?
   email     String   @unique
-  phone     String
-  address   String
-  city      String
-  state     String
-  zip       String
-  country   String
+  phone     String?
+  address   String?
+  city      String?
+  state     String?
+  zip       String?
+  country   String?
   projectId String
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  messages  Message[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -93,9 +95,9 @@ model Project {
   stage         Stage
   contacts      Contact[]
   permissions   Permission[]
+  messages      Message[]
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
-  messages      Message[]
 
   @@index([agencyId])
 }
@@ -146,11 +148,14 @@ model Permission {
 
 model Message {
   id        String   @id @default(uuid())
-  userId    String
+  userId    String?
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contactId String?
+  contact   Contact?  @relation(fields: [contactId], references: [id], onDelete: Cascade)
   projectId String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   message   String
+  read      Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
