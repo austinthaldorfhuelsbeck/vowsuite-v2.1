@@ -4,14 +4,14 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
 
-export const addAccountDataToAgency = async (agency: Agency) => {
-  const accounts = await db.account.findMany({
+const addProjectDataToAgency = async (agency: Agency) => {
+  const projects = await db.project.findMany({
     where: { agencyId: agency.id },
   });
 
   return {
     ...agency,
-    accounts,
+    projects,
   };
 };
 
@@ -33,6 +33,6 @@ export const agencyRouter = createTRPCRouter({
         },
       });
 
-      return addAccountDataToAgency(agency);
+      return addProjectDataToAgency(agency);
     }),
 });

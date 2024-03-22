@@ -1,7 +1,7 @@
 "use client";
 
 import { PersonIcon } from "@radix-ui/react-icons";
-import { BriefcaseBusinessIcon, PlusIcon } from "lucide-react";
+import { BriefcaseBusinessIcon, FolderPenIcon, PlusIcon } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
@@ -10,6 +10,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+
+const menuItems = [
+  { icon: PersonIcon, label: "Lead" },
+  { icon: BriefcaseBusinessIcon, label: "Project" },
+  { label: "Collection", icon: FolderPenIcon },
+];
 
 const NewItemMenu = () => (
   <DropdownMenu>
@@ -21,14 +27,12 @@ const NewItemMenu = () => (
     </DropdownMenuTrigger>
     <DropdownMenuContent className="mr-5 w-56">
       <DropdownMenuGroup>
-        <DropdownMenuItem className="flex space-x-3">
-          <BriefcaseBusinessIcon className="h-5 w-5" />
-          <span>Project</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem className="flex space-x-3">
-          <PersonIcon className="h-5 w-5" />
-          <span>Client</span>
-        </DropdownMenuItem>
+        {menuItems.map((item, index) => (
+          <DropdownMenuItem key={index} className="flex items-center space-x-2">
+            <item.icon className="h-5 w-5" />
+            <span>{item.label}</span>
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuGroup>
     </DropdownMenuContent>
   </DropdownMenu>

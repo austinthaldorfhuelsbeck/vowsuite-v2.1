@@ -1,142 +1,171 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "mysql"
-    url      = env("DATABASE_URL")
-}
-
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    @@index([name])
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-    id           String         @id @default(uuid())
-    email        String         @unique
-    agencyId     String?
-    agency       Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-    permissions  Permission[]
-    Notification Notification[]
-    createdAt    DateTime       @default(now())
-    updatedAt    DateTime       @updatedAt
+  id            String         @id @default(uuid())
+  email         String         @unique
+  agencyId      String?
+  agency        Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  permissions   Permission[]
+  messages      Message[]
+  notifications Notification[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 
-    @@index([agencyId])
+  @@index([agencyId])
 }
 
 enum Plan {
-    BASIC
-    PRO
-    ENTERPRISE
+  BASIC
+  PRO
+  ENTERPRISE
 }
 
 model Agency {
-    id              String    @id @default(uuid())
-    name            String
-    avatar          String
-    email           String    @unique
-    website         String?
-    facebook        String?
-    twitter         String?
-    instagram       String?
-    tiktok          String?
-    youtube         String?
-    vimeo           String?
-    fontPrimary     String
-    fontSecondary   String
-    colorAccent     String
-    colorBackground String
-    colorText       String
-    users           User[]
-    plan            Plan
-    projects        Project[]
-    createdAt       DateTime  @default(now())
-    updatedAt       DateTime  @updatedAt
+  id              String    @id @default(uuid())
+  name            String
+  avatar          String
+  email           String    @unique
+  website         String?
+  facebook        String?
+  twitter         String?
+  instagram       String?
+  tiktok          String?
+  youtube         String?
+  vimeo           String?
+  fontPrimary     String
+  fontSecondary   String
+  colorAccent     String
+  colorBackground String
+  colorText       String
+  users           User[]
+  plan            Plan
+  projects        Project[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }
 
 model Contact {
-    id        String   @id @default(uuid())
-    firstName String
-    lastName  String
-    email     String   @unique
-    phone     String
-    address   String
-    city      String
-    state     String
-    zip       String
-    country   String
-    projectId String
-    project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(uuid())
+  firstName String
+  lastName  String
+  email     String   @unique
+  phone     String
+  address   String
+  city      String
+  state     String
+  zip       String
+  country   String
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@index([projectId])
+  @@index([projectId])
 }
 
 enum Stage {
-    LEAD
-    PROSPECT
-    PROPOSAL_SENT
-    CUSTOMER
-    PARTNER
+  LEAD
+  PROSPECT
+  PROPOSAL_SENT
+  CUSTOMER
+  PARTNER
+  ONGOING
 }
 
 model Project {
-    id            String       @id @default(uuid())
-    name          String
-    email         String       @unique
-    avatar        String?
-    eventDate     DateTime
-    eventLocation String
-    description   String
-    notes         String
-    agencyId      String
-    agency        Agency       @relation(fields: [agencyId], references: [id])
-    stage         Stage
-    contacts      Contact[]
-    permissions   Permission[]
-    createdAt     DateTime     @default(now())
-    updatedAt     DateTime     @updatedAt
+  id            String       @id @default(uuid())
+  name          String
+  email         String       @unique
+  avatar        String?
+  description   String
+  notes         String
+  agencyId      String
+  agency        Agency       @relation(fields: [agencyId], references: [id])
+  event         Event?
+  collection    Collection?
+  stage         Stage
+  contacts      Contact[]
+  permissions   Permission[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  messages      Message[]
 
-    @@index([agencyId])
+  @@index([agencyId])
+}
+
+model Event {
+  id        String   @id @default(uuid())
+  name      String
+  date      DateTime
+  location  String
+  projectId String   @unique
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
+}
+
+model Collection {
+  id        String   @id @default(uuid())
+  name      String
+  projectId String   @unique
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
 }
 
 enum Role {
-    ADMIN
-    USER
-    GUEST
+  ADMIN
+  USER
+  GUEST
 }
 
 model Permission {
-    id        String   @id @default(uuid())
-    userId    String
-    projectId String
-    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-    role      Role
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(uuid())
+  userId    String
+  projectId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  role      Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@index([userId])
-    @@index([projectId])
+  @@index([userId])
+  @@index([projectId])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  userId    String
+  projectId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([projectId])
 }
 
 model Notification {
-    id        String   @id @default(uuid())
-    userId    String
-    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    message   String
-    read      Boolean  @default(false)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@index([userId, read])
+  @@index([userId, read])
 }

@@ -1,18 +1,9 @@
 import { currentUser } from "@clerk/nextjs";
 import { type Agency } from "@prisma/client";
-import { ArrowRightIcon, InfoIcon } from "lucide-react";
+import { InfoIcon } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import ServerError from "~/components/global/server-error";
-import { Button } from "~/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { Separator } from "~/components/ui/separator";
+import { Card, CardContent } from "~/components/ui/card";
 import {
   Tooltip,
   TooltipContent,
@@ -21,6 +12,8 @@ import {
 } from "~/components/ui/tooltip";
 import { api } from "~/trpc/server";
 import greeting from "~/utils/greeting";
+import ActivityCard from "./_components/activity-card";
+import LeadsCard from "./_components/leads-card";
 
 function DashboardHeader(props: { firstName: string | null; agency?: Agency }) {
   return (
@@ -63,114 +56,63 @@ function DashboardHeader(props: { firstName: string | null; agency?: Agency }) {
   );
 }
 
-function NotFound() {
-  return (
-    <div className="mt-5 flex flex-col items-center space-y-3">
-      <Image
-        src="/images/well-done.svg"
-        width={125}
-        height={125}
-        alt="Relaxing with balloons, leaning on an empty notifications window"
-      />
-      <p className="text-center text-sm text-muted-foreground">
-        You&#39;ve handled everything. <br /> Treat yourself 🍰
-      </p>
-      <Link href="/studio/pipeline">
-        <Button variant="link">Show all</Button>
-      </Link>
-    </div>
-  );
-}
+async function StatsCard(props: { agencyId: string }) {
+  const projects = await api.projects.getByAgencyId({
+    agencyId: props.agencyId,
+  });
+  const leads = projects?.filter((project) => project.stage === "LEAD");
 
-async function LeadsCard(props: { agencyId: string }) {
-  const leads = (
-    await api.projects.getByAgencyId({
-      agencyId: props.agencyId,
-    })
-  )?.filter((project) => project.stage === "LEAD");
+  const stats = [
+    {
+      title: "New leads",
+      tooltipContent:
+        "Leads are potential clients who have shown interest through lead forms.",
+      value: leads?.length ?? 0,
+    },
+    {
+      title: "Unread messages",
+      tooltipContent: "Unread messages from your projects.",
+      value: 0,
+    },
+    {
+      title: "Draft collections",
+      tooltipContent:
+        "Collections that you are still working on and haven't published yet.",
+      value: 0,
+    },
+    {
+      title: `${new Date().getFullYear()} bookings`,
+      isCurrency: true,
+      tooltipContent:
+        "Total invoiced amount of all projects converted to booked status this year. Includes taxes and discounts.",
+      value: 0,
+    },
+  ];
 
   return (
-    <Card className="flex-1 rounded-sm shadow">
-      <CardHeader>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <CardTitle className="flex space-x-2">
-                <span>Leads</span>
-                <InfoIcon size={16} className="my-auto" />
-              </CardTitle>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>
-                Leads are potential clients who have shown interest through lead
-                forms.
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </CardHeader>
-      <Separator />
-      <CardContent className="p-0 sm:min-h-80">
-        {!leads && <NotFound />}
-        {leads?.map((project) => {
-          return (
-            <Link
-              key={project.id}
-              href={`/studio/project/${project.id}`}
-              passHref
-            >
-              <div className="flex cursor-pointer justify-between p-3 transition-all ease-in-out hover:bg-secondary">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm">{project.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {project.eventLocation}
+    <Card className="hidden rounded-sm shadow md:inline-block">
+      <CardContent className="flex items-center justify-between divide-x px-0 py-5">
+        {stats.map((stat, idx) => (
+          <div key={idx} className="mt-0 flex flex-1 flex-col items-center">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <p className="flex space-x-2 text-sm text-muted-foreground">
+                    <span>{stat.title}</span>
+                    <InfoIcon size={16} className="my-auto" />
                   </p>
-                </div>
-                <p className="my-auto text-xs text-muted-foreground">
-                  {project.eventDate.toLocaleDateString("en-us", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </p>
-              </div>
-            </Link>
-          );
-        })}
-      </CardContent>
-      <CardFooter className="p-0">
-        <Link href="/studio/pipeline" passHref>
-          <Button variant="link" className="flex space-x-2">
-            <span>Go to pipeline</span>
-            <ArrowRightIcon size={16} />
-          </Button>
-        </Link>
-      </CardFooter>
-    </Card>
-  );
-}
-
-function ActivityCard(props: { agencyId: string }) {
-  return (
-    <Card className="flex-1 rounded-sm shadow">
-      <CardHeader>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <CardTitle className="flex space-x-2">
-                <span>Messages</span>
-                <InfoIcon size={16} className="my-auto" />
-              </CardTitle>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Unread messages from your clients will appear here.</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </CardHeader>
-      <Separator />
-      <CardContent className="p-0 sm:min-h-80">
-        <NotFound />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{stat.tooltipContent}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <h2 className="text-4xl font-bold">
+              {stat.isCurrency && "$"}
+              {stat.value}
+            </h2>
+          </div>
+        ))}
       </CardContent>
     </Card>
   );
@@ -178,15 +120,7 @@ function ActivityCard(props: { agencyId: string }) {
 
 export default async function Studio() {
   const user = await currentUser();
-  const userEmail = user?.emailAddresses[0]?.emailAddress;
-
-  if (!userEmail)
-    return (
-      <ServerError
-        code={500}
-        message="Something went wrong. Please try again."
-      />
-    );
+  const userEmail = user?.emailAddresses[0]?.emailAddress ?? "";
 
   // This function will load the user from the database if it exists,
   // or create it if it doesn't and also create a new agency
@@ -201,7 +135,7 @@ export default async function Studio() {
       });
 
       const newAgencyResponse = await api.agency.createByUser({
-        firstName: user.firstName ?? "New User",
+        firstName: user?.firstName ?? "New User",
         email,
       });
 
@@ -218,16 +152,21 @@ export default async function Studio() {
 
   const userFromDb = await loadOrCreateUser(userEmail);
 
+  if (!user || !userFromDb.agencyId)
+    return (
+      <ServerError
+        code={500}
+        message="Could not load user resource. Please try again."
+      />
+    );
+
   return (
     <>
       <DashboardHeader firstName={user.firstName} agency={userFromDb.agency} />
-      <div className="flex flex-col gap-5 sm:flex-row">
-        {userFromDb.agencyId && (
-          <>
-            <LeadsCard agencyId={userFromDb.agencyId} />
-            <ActivityCard agencyId={userFromDb.agencyId} />
-          </>
-        )}
+      <StatsCard agencyId={userFromDb.agencyId} />
+      <div className="flex flex-col gap-5 sm:grid sm:grid-cols-2">
+        <LeadsCard agencyId={userFromDb.agencyId} />
+        <ActivityCard agencyId={userFromDb.agencyId} />
       </div>
       {/* <pre>{JSON.stringify(userFromDb, null, "\t")}</pre> */}
     </>
