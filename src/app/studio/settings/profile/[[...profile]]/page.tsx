@@ -6,7 +6,7 @@ export default function Page() {
       appearance={{
         elements: {
           card: "rounded-xl border border-muted bg-transparent shadow",
-          navbar: "border-muted border-r border-l",
+          navbar: "border-muted border-r",
           navbarButton: "text-card-foreground",
           headerTitle: "text-card-foreground",
           headerSubtitle: "text-muted-foreground",

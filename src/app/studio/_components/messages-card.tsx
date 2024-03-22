@@ -97,12 +97,12 @@ export default async function MessagesCard(props: { agencyId: string }) {
       </CardHeader>
       <Separator />
       {unreadMessages?.length === 0 && (
-        <CardContent className="flex items-center justify-center p-0 sm:min-h-80">
+        <CardContent className="flex items-center justify-center p-0 sm:min-h-64">
           <NotFound />
         </CardContent>
       )}
       {unreadMessages && unreadMessages.length > 0 && (
-        <CardContent className="p-0 sm:min-h-80">
+        <CardContent className="p-0 sm:min-h-64">
           {unreadMessages.map((message) => {
             // return <MessageMenuItem key={message.id} messageId={message.id} />;
             return <MessageMenuItem key={message.id} messageId={message.id} />;

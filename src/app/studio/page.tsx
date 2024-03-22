@@ -1,7 +1,14 @@
 import { currentUser } from "@clerk/nextjs";
 import { type Agency } from "@prisma/client";
-import { InfoIcon } from "lucide-react";
+import { PersonIcon } from "@radix-ui/react-icons";
+import {
+  BadgeDollarSignIcon,
+  BriefcaseBusinessIcon,
+  FolderPenIcon,
+  InfoIcon,
+} from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import ServerError from "~/components/global/server-error";
 import { Card, CardContent } from "~/components/ui/card";
 import {
@@ -14,6 +21,7 @@ import { api } from "~/trpc/server";
 import greeting from "~/utils/greeting";
 import LeadsCard from "./_components/leads-card";
 import MessagesCard from "./_components/messages-card";
+import UpcomingEventsCard from "./_components/upcoming-events-card";
 
 function DashboardHeader(props: { firstName: string | null; agency?: Agency }) {
   return (
@@ -41,16 +49,18 @@ function DashboardHeader(props: { firstName: string | null; agency?: Agency }) {
         </div>
       </div>
       {props.agency && (
-        <div className="flex flex-col space-y-2">
-          <Image
-            src={props.agency.avatar}
-            width={50}
-            height={50}
-            alt="Agency logo"
-            className="mx-auto rounded-full"
-          />
-          <p className="text-sm text-muted-foreground">{props.agency.name}</p>
-        </div>
+        <Link href="/studio/settings/agency">
+          <div className="flex flex-col space-y-2">
+            <Image
+              src={props.agency.avatar}
+              width={50}
+              height={50}
+              alt="Agency logo"
+              className="mx-auto rounded-full"
+            />
+            <p className="text-sm text-muted-foreground">{props.agency.name}</p>
+          </div>
+        </Link>
       )}
     </div>
   );
@@ -121,6 +131,31 @@ async function StatsCard(props: { agencyId: string }) {
   );
 }
 
+function CreateCard() {
+  const cards = [
+    { title: "New lead", icon: PersonIcon },
+    { title: "New project", icon: BriefcaseBusinessIcon },
+    { title: "New collection", icon: FolderPenIcon },
+    { title: "New invoice", icon: BadgeDollarSignIcon },
+  ];
+
+  return (
+    <Card className="h-52 rounded-sm shadow">
+      <CardContent className="grid h-full grid-cols-2 gap-3 p-3">
+        {cards.map((card, idx) => (
+          <Card
+            key={idx}
+            className="flex cursor-pointer flex-col items-center justify-center gap-1 text-sm transition-all ease-in-out hover:bg-muted"
+          >
+            <card.icon className="h-4 w-4 text-primary" />
+            <span>{card.title}</span>
+          </Card>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}
+
 export default async function Studio() {
   const user = await currentUser();
   const userEmail = user?.emailAddresses[0]?.emailAddress ?? "";
@@ -167,8 +202,10 @@ export default async function Studio() {
     <>
       <DashboardHeader firstName={user.firstName} agency={userFromDb.agency} />
       <StatsCard agencyId={userFromDb.agencyId} />
-      <div className="flex flex-col gap-5 sm:grid sm:grid-cols-2">
+      <div className="flex flex-col gap-5 sm:grid sm:grid-cols-2 xl:grid-cols-3">
         <LeadsCard agencyId={userFromDb.agencyId} />
+        <UpcomingEventsCard agencyId={userFromDb.agencyId} />
+        <CreateCard />
         <MessagesCard agencyId={userFromDb.agencyId} />
       </div>
       {/* <pre>{JSON.stringify(userFromDb, null, "\t")}</pre> */}
