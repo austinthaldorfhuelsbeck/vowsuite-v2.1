@@ -163,7 +163,7 @@ export const featuresList = [
 export const createCardConfig = {
   title: "Create new",
   links: [
-    { title: "New lead", icon: UserIcon, href: "/studio/leads/new" },
+    { title: "New lead", icon: UserIcon, href: "/studio/projects/new" },
     {
       title: "New project",
       icon: BriefcaseBusinessIcon,
@@ -195,3 +195,31 @@ export const exploreCardConfig = {
     },
   ],
 };
+
+export const studioNavigation: {
+  title: string;
+  href: string;
+  description: string;
+}[] = [
+  {
+    title: "Calendar",
+    href: "/studio/calendar",
+    description:
+      "View and manage your schedule, appointments, and upcoming events.",
+  },
+  {
+    title: "Payments",
+    href: "/studio/payments",
+    description: "Manage your financial transactions and view reports.",
+  },
+  {
+    title: "Team",
+    href: "/studio/settings/team",
+    description: "Invite team members, assign roles, and manage team access.",
+  },
+  {
+    title: "Branding",
+    href: "/studio/settings/agency",
+    description: "Customize your agency profile, logo, and brand colors.",
+  },
+];

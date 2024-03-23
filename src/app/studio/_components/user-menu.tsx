@@ -1,5 +1,4 @@
 import { SignOutButton } from "@clerk/nextjs";
-import { type User } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
@@ -16,7 +15,11 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 
-const UserAvatar = (props: Partial<User>) => {
+const UserAvatar = (props: {
+  imageUrl: string;
+  firstName: string;
+  lastName: string;
+}) => {
   return (
     <Avatar>
       <AvatarImage src={props.imageUrl ?? undefined} alt="Profile Image" />
@@ -27,19 +30,22 @@ const UserAvatar = (props: Partial<User>) => {
   );
 };
 
-const UserMenu = (props: { user: Partial<User> }) => (
+const UserMenu = (props: {
+  imageUrl: string;
+  firstName: string;
+  lastName: string;
+}) => (
   <DropdownMenu>
     <DropdownMenuTrigger>
-      <UserAvatar {...props.user} />
+      <UserAvatar {...props} />
     </DropdownMenuTrigger>
     <DropdownMenuContent className="mr-5 w-56">
       <DropdownMenuLabel className="font-bold">
-        {props.user.imageUrl && (
+        {props.imageUrl && (
           <div className="flex space-x-3">
-            {props.user.imageUrl && <UserAvatar {...props.user} />}
+            {props.imageUrl && <UserAvatar {...props} />}
             <span>
-              {`${props.user.firstName} ${props.user.lastName}` ??
-                "Vowsuite User"}
+              {`${props.firstName} ${props.lastName}` ?? "Vowsuite User"}
             </span>
           </div>
         )}

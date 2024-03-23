@@ -13,6 +13,7 @@ import MessagesCard from "./_components/messages-card";
 import MobileAppAlert from "./_components/mobile-app-alert";
 import PaymentsCard from "./_components/payments-card";
 import StatsCard from "./_components/stats-card";
+import Navigation from "./_components/studio-navigation";
 import TasksCard from "./_components/tasks-card";
 import UpcomingEventsCard from "./_components/upcoming-events-card";
 
@@ -127,49 +128,58 @@ export default async function Studio() {
     );
 
   return (
-    <div className="flex flex-col gap-5 sm:grid sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
-      <div className="sm:col-span-2 xl:col-span-3">
-        <DashboardHeader
-          firstName={user.firstName}
-          agency={userFromDb.agency}
-        />
-      </div>
+    <>
+      <Navigation
+        imageUrl={user.imageUrl}
+        firstName={user.firstName ?? "Vowsuite"}
+        lastName={user.lastName ?? "User"}
+      />
+      <div className="mx-auto my-5 max-w-4xl px-5 xl:max-w-7xl">
+        <div className="flex flex-col gap-5 sm:grid sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
+          <div className="sm:col-span-2 xl:col-span-3">
+            <DashboardHeader
+              firstName={user.firstName}
+              agency={userFromDb.agency}
+            />
+          </div>
 
-      <div className="inline-block sm:hidden">
-        <MobileAppAlert />
-      </div>
+          <div className="inline-block sm:hidden">
+            <MobileAppAlert />
+          </div>
 
-      <div className="mt-0 hidden sm:col-span-2 sm:inline-block xl:col-span-3">
-        <StatsCard agencyId={userFromDb.agencyId} />
-      </div>
+          <div className="mt-0 hidden sm:col-span-2 sm:inline-block xl:col-span-3">
+            <StatsCard agencyId={userFromDb.agencyId} />
+          </div>
 
-      <div className="hidden sm:row-span-2 sm:inline-block">
-        <LeadsCard agencyId={userFromDb.agencyId} />
-      </div>
+          <div className="hidden sm:row-span-2 sm:inline-block">
+            <LeadsCard agencyId={userFromDb.agencyId} />
+          </div>
 
-      <div className="hidden sm:row-span-2 sm:inline-block">
-        <UpcomingEventsCard agencyId={userFromDb.agencyId} />
-      </div>
+          <div className="hidden sm:row-span-2 sm:inline-block">
+            <UpcomingEventsCard agencyId={userFromDb.agencyId} />
+          </div>
 
-      <div className="hidden sm:row-span-1 sm:inline-block xl:col-span-1 xl:row-span-2">
-        <MessagesCard agencyId={userFromDb.agencyId} />
-      </div>
+          <div className="hidden sm:row-span-1 sm:inline-block xl:col-span-1 xl:row-span-2">
+            <MessagesCard agencyId={userFromDb.agencyId} />
+          </div>
 
-      <div className="sm:row-span-1">
-        <LinksCard {...createCardConfig} />
-      </div>
+          <div className="sm:row-span-1">
+            <LinksCard {...createCardConfig} />
+          </div>
 
-      <div className="hidden sm:col-span-1 sm:inline-block xl:col-span-2 xl:row-span-2">
-        <PaymentsCard agencyId={userFromDb.agencyId} />
-      </div>
+          <div className="hidden sm:col-span-1 sm:inline-block xl:col-span-2 xl:row-span-2">
+            <PaymentsCard agencyId={userFromDb.agencyId} />
+          </div>
 
-      <div className="hidden sm:inline-block">
-        <TasksCard agencyId={userFromDb.agencyId} />
-      </div>
+          <div className="hidden sm:inline-block">
+            <TasksCard agencyId={userFromDb.agencyId} />
+          </div>
 
-      <div className="sm:col-span-2 xl:col-span-3">
-        <LinksCard {...exploreCardConfig} />
+          <div className="sm:col-span-2 xl:col-span-3">
+            <LinksCard {...exploreCardConfig} />
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

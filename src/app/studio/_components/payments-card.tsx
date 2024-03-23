@@ -25,7 +25,7 @@ import {
 } from "~/components/ui/tooltip";
 import { api } from "~/trpc/server";
 
-function NotFound(props: { message?: JSX.Element }) {
+function NotFound(props: { message?: string }) {
   return (
     <div className="mt-10 flex flex-col items-center space-y-3">
       <Image
@@ -35,7 +35,7 @@ function NotFound(props: { message?: JSX.Element }) {
         alt="Two empty clipboards"
       />
       <p className="text-center text-sm text-muted-foreground">
-        {props.message ?? <p>No payments found.</p>}
+        {props.message ?? "No payments found."}
       </p>
     </div>
   );
@@ -170,7 +170,7 @@ export default async function PaymentsCard(props: { agencyId: string }) {
           </div>
 
           <Tabs defaultValue="paid" className="hidden xl:inline-block">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-3 bg-primary/30 text-card-foreground">
               <TabsTrigger value="paid">{`Paid/Processing (${payments.length})`}</TabsTrigger>
               <TabsTrigger value="upcoming">{`Upcoming (${payments.length})`}</TabsTrigger>
               <TabsTrigger value="overdue">{`Overdue (${payments.length})`}</TabsTrigger>
@@ -185,15 +185,7 @@ export default async function PaymentsCard(props: { agencyId: string }) {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col items-center justify-center p-0">
-                  <NotFound
-                    message={
-                      <p>
-                        It&#39;s a quiet month.
-                        <br />
-                        No payments are being processed at the moment.
-                      </p>
-                    }
-                  />
+                  <NotFound message="No payments are being processed at the moment." />
                   <Link href="/studio/invoices">
                     <Button variant="link" className="my-3">
                       Create an invoice
@@ -212,15 +204,7 @@ export default async function PaymentsCard(props: { agencyId: string }) {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col items-center justify-center p-0">
-                  <NotFound
-                    message={
-                      <p>
-                        No upcoming payments.
-                        <br />
-                        Keep an eye on this space for future payments.
-                      </p>
-                    }
-                  />
+                  <NotFound message="No payments scheduled for the rest of this month." />
                   <Link href="/studio/invoices">
                     <Button variant="link" className="mt-3">
                       Create an invoice
@@ -239,7 +223,7 @@ export default async function PaymentsCard(props: { agencyId: string }) {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col items-center justify-center p-0">
-                  <NotFound message={<p>No overdue payments this month.</p>} />
+                  <NotFound message="No overdue payments this month." />
 
                   <Link href="/studio/invoices">
                     <Button variant="link" className="my-3">
