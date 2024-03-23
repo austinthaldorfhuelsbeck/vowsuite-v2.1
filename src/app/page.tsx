@@ -12,7 +12,6 @@ export default async function Home() {
     <>
       <Navigation />
       <Hero />
-      {/* <HeroParallaxDemo /> */}
       <Pricing />
       <VisualFeatures />
       <Features />

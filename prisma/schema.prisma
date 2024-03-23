@@ -77,9 +77,8 @@ model Contact {
 enum Stage {
   LEAD
   PROSPECT
-  PROPOSAL_SENT
-  CUSTOMER
-  PARTNER
+  CLIENT
+  COMPLETED
   ONGOING
 }
 

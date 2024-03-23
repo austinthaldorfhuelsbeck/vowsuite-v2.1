@@ -21,7 +21,6 @@ import {
 import MobileAppAlert from "./_components/mobile-app-alert";
 import PaymentsCard from "./_components/payments-card";
 import StatsCard from "./_components/stats-card";
-import Navigation from "./_components/studio-navigation";
 
 // uses tailwind queries to render three distinct layouts:
 // mobile, tablet, and desktop
@@ -106,79 +105,72 @@ export default async function Studio() {
 
   return (
     <>
-      <Navigation
-        imageUrl={user.imageUrl}
-        firstName={user.firstName ?? "Vowsuite"}
-        lastName={user.lastName ?? "User"}
-      />
-      <div className="mx-auto my-5 max-w-4xl px-5 xl:max-w-7xl">
-        <div className="flex flex-col gap-5 sm:grid sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
-          <div className="sm:col-span-2 xl:col-span-3">
-            <DashboardHeader
-              firstName={user.firstName}
-              agency={userFromDb.agency}
-            />
-          </div>
+      <div className="flex flex-col gap-5 sm:grid sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
+        <div className="sm:col-span-2 xl:col-span-3">
+          <DashboardHeader
+            firstName={user.firstName}
+            agency={userFromDb.agency}
+          />
+        </div>
 
-          <div className="inline-block sm:hidden">
-            <MobileAppAlert />
-          </div>
+        <div className="inline-block sm:hidden">
+          <MobileAppAlert />
+        </div>
 
-          {/* Stats Card */}
-          <div className="mt-0 hidden sm:col-span-2 sm:inline-block xl:col-span-3">
-            <StatsCard agencyId={userFromDb.agencyId} />
-          </div>
+        {/* Stats Card */}
+        <div className="mt-0 hidden sm:col-span-2 sm:inline-block xl:col-span-3">
+          <StatsCard agencyId={userFromDb.agencyId} />
+        </div>
 
-          {/* Leads Card */}
-          <div className="hidden sm:row-span-2 sm:inline-block">
-            <DashboardCard
-              {...leadsCardConfig}
-              title={`Leads (${leads?.length})`}
-              data={leadsData}
-            />
-          </div>
+        {/* Leads Card */}
+        <div className="hidden sm:row-span-2 sm:inline-block">
+          <DashboardCard
+            {...leadsCardConfig}
+            title={`Leads (${leads?.length})`}
+            data={leadsData}
+          />
+        </div>
 
-          {/* Upcoming Events Card */}
-          <div className="hidden sm:row-span-2 sm:inline-block">
-            <DashboardCard
-              {...upcomingEventsCardConfig}
-              title={`Upcoming Events (${upcomingEvents?.length})`}
-              data={upcomingEventsData}
-            />
-          </div>
+        {/* Upcoming Events Card */}
+        <div className="hidden sm:row-span-2 sm:inline-block">
+          <DashboardCard
+            {...upcomingEventsCardConfig}
+            title={`Upcoming Events (${upcomingEvents?.length})`}
+            data={upcomingEventsData}
+          />
+        </div>
 
-          {/* Messages Card */}
-          <div className="hidden sm:row-span-1 sm:inline-block xl:col-span-1 xl:row-span-2">
-            <DashboardCard
-              {...messagesCardConfig}
-              title={`Messages (${unreadMessages?.length})`}
-              data={messagesData}
-            />
-          </div>
+        {/* Messages Card */}
+        <div className="hidden sm:row-span-1 sm:inline-block xl:col-span-1 xl:row-span-2">
+          <DashboardCard
+            {...messagesCardConfig}
+            title={`Messages (${unreadMessages?.length})`}
+            data={messagesData}
+          />
+        </div>
 
-          {/* Create New Card */}
-          <div className="sm:row-span-1">
-            <DashboardLinksCard {...createCardConfig} />
-          </div>
+        {/* Create New Card */}
+        <div className="sm:row-span-1">
+          <DashboardLinksCard {...createCardConfig} />
+        </div>
 
-          {/* Payments Card */}
-          <div className="hidden sm:col-span-1 sm:inline-block xl:col-span-2 xl:row-span-2">
-            <PaymentsCard agencyId={userFromDb.agencyId} />
-          </div>
+        {/* Payments Card */}
+        <div className="hidden sm:col-span-1 sm:inline-block xl:col-span-2 xl:row-span-2">
+          <PaymentsCard agencyId={userFromDb.agencyId} />
+        </div>
 
-          {/* Tasks Card */}
-          <div className="hidden sm:inline-block">
-            <DashboardCard
-              {...tasksCardConfig}
-              title={`Tasks (${tasks?.length})`}
-              data={tasksData}
-            />
-          </div>
+        {/* Tasks Card */}
+        <div className="hidden sm:inline-block">
+          <DashboardCard
+            {...tasksCardConfig}
+            title={`Tasks (${tasks?.length})`}
+            data={tasksData}
+          />
+        </div>
 
-          {/* Explore Card */}
-          <div className="sm:col-span-2 xl:col-span-3">
-            <DashboardLinksCard {...exploreCardConfig} />
-          </div>
+        {/* Explore Card */}
+        <div className="sm:col-span-2 xl:col-span-3">
+          <DashboardLinksCard {...exploreCardConfig} />
         </div>
       </div>
     </>

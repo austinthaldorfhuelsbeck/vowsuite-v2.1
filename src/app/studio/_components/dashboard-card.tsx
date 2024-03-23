@@ -17,7 +17,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import NoResults from "./no-results";
+import NoResults from "../../../components/global/no-results";
 
 interface DashboardCardProps {
   title: string;

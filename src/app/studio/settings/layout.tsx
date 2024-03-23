@@ -12,10 +12,10 @@ export default function SettingsLayout({
   const pathname = usePathname();
   const activeTab = pathname.split("/").pop();
   return (
-    <>
+    <div className="flex flex-col space-y-3">
       <h1 className="text-2xl font-bold">Settings</h1>
-      <Tabs defaultValue={activeTab} className="sm:w-[400px]">
-        <TabsList className="grid w-full grid-cols-2">
+      <Tabs defaultValue={activeTab} className="sm:w-[600px]">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="profile" className="px-0">
             <Link href="/studio/settings/profile" className="w-full">
               Profile
@@ -26,9 +26,15 @@ export default function SettingsLayout({
               Agency
             </Link>
           </TabsTrigger>
+          <TabsTrigger value="team" className="px-0">
+            <Link href="/studio/settings/team" className="w-full">
+              Team
+            </Link>
+          </TabsTrigger>
         </TabsList>
       </Tabs>
-      <div className="">{children}</div>
-    </>
+
+      {children}
+    </div>
   );
 }

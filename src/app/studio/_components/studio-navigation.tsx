@@ -1,5 +1,6 @@
 "use client";
 
+import { useUser } from "@clerk/nextjs";
 import { BellIcon, BugIcon, SearchIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,6 +15,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "~/components/ui/navigation-menu";
+import { Skeleton } from "~/components/ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
@@ -128,15 +130,13 @@ function StudioNavigationMenu() {
   );
 }
 
-export default function Navigation(props: {
-  imageUrl: string;
-  firstName: string;
-  lastName: string;
-}) {
+export default function Navigation() {
+  const { user, isLoaded } = useUser();
+
   return (
     <header className="relative flex items-center justify-between px-5 py-3">
       <aside className="flex space-x-5">
-        <Link href="/studio/studio" className="flex items-center gap-2">
+        <Link href="/studio" className="flex items-center gap-2">
           <Image
             src={"/assets/logo.svg"}
             alt="Vowsuite"
@@ -160,7 +160,14 @@ export default function Navigation(props: {
 
       <aside className="flex space-x-5">
         <BellIcon className="my-auto h-5 w-5 cursor-pointer text-muted-foreground transition-all ease-in-out hover:text-card-foreground" />
-        <UserMenu {...props} />
+        {!isLoaded && <Skeleton className="h-10 w-10 rounded-full" />}
+        {isLoaded && user && (
+          <UserMenu
+            imageUrl={user.imageUrl}
+            firstName={user.firstName ?? "Vowsuite"}
+            lastName={user.lastName ?? "User"}
+          />
+        )}
       </aside>
     </header>
   );
