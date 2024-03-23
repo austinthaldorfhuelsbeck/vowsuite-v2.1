@@ -1,3 +1,4 @@
+import { type Project, type Task } from "@prisma/client";
 import { ArrowRightIcon, InfoIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -36,15 +37,32 @@ function NotFound() {
   );
 }
 
-async function TaskMenuItem(props: { taskId: string }) {
-  return <></>;
+function TaskMenuItem(props: { task: Task; project?: Project }) {
+  return (
+    <Link href={`/studio/task/${props.task.id}`} passHref>
+      <div className="flex cursor-pointer justify-between p-3 transition-all ease-in-out hover:bg-secondary">
+        <div className="flex flex-col space-y-1">
+          <p className="text-sm">{props.task.title}</p>
+          <p className="text-xs text-muted-foreground">
+            {props.project?.name ?? "No project"}
+          </p>
+        </div>
+        <p className="my-auto text-xs text-muted-foreground">
+          {props.task.dueDate.toLocaleDateString("en-us", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })}
+        </p>
+      </div>
+    </Link>
+  );
 }
 
-export default async function TasksCard(props: { agencyId: string }) {
-  const projects = await api.projects.getByAgencyId({
-    agencyId: props.agencyId,
+export default async function TasksCard(props: { userId: string }) {
+  const tasks = await api.tasks.getByUserId({
+    userId: props.userId,
   });
-  const tasks = [];
 
   return (
     <Card className="flex h-full flex-col justify-between rounded-sm shadow">
@@ -74,13 +92,18 @@ export default async function TasksCard(props: { agencyId: string }) {
       {tasks && tasks.length > 0 && (
         <CardContent className="p-0">
           {tasks.map((task) => {
-            // return <TaskMenuItem key={task.id} taskId={task.id} />;
-            return <TaskMenuItem key={task.id} taskId={task.id} />;
+            return (
+              <TaskMenuItem
+                key={task.id}
+                task={task}
+                project={task.project ?? undefined}
+              />
+            );
           })}
         </CardContent>
       )}
 
-      <CardFooter className="p-0">
+      <CardFooter className="mt-auto p-0">
         <Link href="/studio/tasks" passHref>
           <Button variant="link" className="flex space-x-2">
             <span>Go to tasks</span>

@@ -111,7 +111,7 @@ export default async function MessagesCard(props: { agencyId: string }) {
         </CardContent>
       )}
 
-      <CardFooter className="p-0">
+      <CardFooter className="mt-auto p-0">
         <Link href="/studio/pipeline" passHref>
           <Button variant="link" className="flex space-x-2">
             <span>Go to pipeline</span>

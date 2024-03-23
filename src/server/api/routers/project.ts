@@ -14,12 +14,16 @@ const addDataToProject = async (project: Project) => {
   const messages = await db.message.findMany({
     where: { projectId: project.id },
   });
+  const payments = await db.payment.findMany({
+    where: { projectId: project.id },
+  });
 
   return {
     ...project,
     event,
     collection,
     messages,
+    payments,
   };
 };
 

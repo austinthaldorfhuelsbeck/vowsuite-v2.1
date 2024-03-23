@@ -41,7 +41,7 @@ function NotFound(props: { message?: string }) {
   );
 }
 
-async function SubtotalMenuItem(props: {
+function SubtotalMenuItem(props: {
   title: string;
   amount: number;
   color: string;
@@ -61,31 +61,86 @@ async function SubtotalMenuItem(props: {
   );
 }
 
+async function PaymentMenuItem(props: { paymentId: string }) {
+  const payment = await api.payments.getById({ id: props.paymentId });
+
+  if (!payment) {
+    return null;
+  }
+
+  return (
+    <Link href={`/studio/payment/${payment.id}`} passHref>
+      <div className="flex cursor-pointer justify-between p-3 transition-all ease-in-out hover:bg-secondary">
+        <div className="flex flex-col space-y-1">
+          <p className="text-sm">{`$${payment.amount}`}</p>
+          <p className="text-xs text-muted-foreground">
+            {payment.project?.name ?? "No project"}
+          </p>
+          {payment.contact && (
+            <p className="text-xs text-muted-foreground">
+              {`${payment.contact.firstName} ${payment.contact.lastName}`}
+            </p>
+          )}
+        </div>
+        <p className="my-auto text-xs text-muted-foreground">
+          {payment.date.toLocaleDateString("en-us", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })}
+        </p>
+      </div>
+    </Link>
+  );
+}
+
 export default async function PaymentsCard(props: { agencyId: string }) {
   const projects = await api.projects.getByAgencyId({
     agencyId: props.agencyId,
   });
-  const payments = [];
-
+  const paymentsCurrentMonth =
+    projects
+      ?.flatMap((project) => project.payments)
+      .filter((payment) => payment.date.getMonth === new Date().getMonth) ?? [];
+  const paymentsPaid = paymentsCurrentMonth.filter(
+    (payment) => payment.status === "PAID",
+  );
+  const paymentsProcessing = paymentsCurrentMonth.filter(
+    (payment) => payment.status === "PENDING",
+  );
+  const paymentsUpcoming = paymentsCurrentMonth.filter(
+    (payment) => !payment.status,
+  );
+  const paymentsOverdue = paymentsCurrentMonth.filter(
+    (payment) =>
+      payment.date < new Date() &&
+      (!payment.status || payment.status === "FAILED"),
+  );
   const subtotalMenuItems = [
     {
       title: "Paid",
-      amount: 0,
+      amount: paymentsPaid.reduce((acc, payment) => acc + payment.amount, 0),
       color: "#22c55e",
     },
     {
       title: "Processing",
-      amount: 0,
+      amount: paymentsProcessing.reduce(
+        (acc, payment) => acc + payment.amount,
+        0,
+      ),
       color: "#fbbf24",
     },
     {
       title: "Upcoming",
-      amount: 0,
+      amount: paymentsUpcoming.reduce(
+        (acc, payment) => acc + payment.amount,
+        0,
+      ),
       color: "#78716c",
     },
     {
       title: "Overdue",
-      amount: 0,
+      amount: paymentsOverdue.reduce((acc, payment) => acc + payment.amount, 0),
       color: "#dc2626",
     },
   ];
@@ -97,7 +152,7 @@ export default async function PaymentsCard(props: { agencyId: string }) {
           <Tooltip>
             <TooltipTrigger asChild>
               <CardTitle className="mr-auto flex space-x-2">
-                <span>{`Payments (${payments?.length ?? 0})`}</span>
+                <span>{`Payments (${paymentsCurrentMonth?.length ?? 0})`}</span>
                 <InfoIcon size={16} className="my-auto" />
               </CardTitle>
             </TooltipTrigger>
@@ -153,7 +208,7 @@ export default async function PaymentsCard(props: { agencyId: string }) {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <h2 className="flex space-x-2 text-sm text-muted-foreground">
-                      <span>{`Total overdue payments (${payments.length})`}</span>
+                      <span>{`Total overdue payments (${paymentsOverdue?.length})`}</span>
                       <CircleHelpIcon size={16} className="my-auto" />
                     </h2>
                   </TooltipTrigger>
@@ -171,66 +226,110 @@ export default async function PaymentsCard(props: { agencyId: string }) {
 
           <Tabs defaultValue="paid" className="hidden xl:inline-block">
             <TabsList className="grid w-full grid-cols-3 bg-primary/30 text-card-foreground">
-              <TabsTrigger value="paid">{`Paid/Processing (${payments.length})`}</TabsTrigger>
-              <TabsTrigger value="upcoming">{`Upcoming (${payments.length})`}</TabsTrigger>
-              <TabsTrigger value="overdue">{`Overdue (${payments.length})`}</TabsTrigger>
+              <TabsTrigger value="paid">{`Paid/Processing (${paymentsPaid?.length + paymentsProcessing?.length})`}</TabsTrigger>
+              <TabsTrigger value="upcoming">{`Upcoming (${paymentsUpcoming?.length})`}</TabsTrigger>
+              <TabsTrigger value="overdue">{`Overdue (${paymentsOverdue?.length})`}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="paid">
               <Card className="flex h-full flex-col justify-between rounded-sm shadow">
                 <CardHeader>
-                  <CardTitle>Paid/Processing</CardTitle>
                   <CardDescription>
                     Payments that have been paid or are currently processing.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="flex flex-col items-center justify-center p-0">
-                  <NotFound message="No payments are being processed at the moment." />
-                  <Link href="/studio/invoices">
-                    <Button variant="link" className="my-3">
-                      Create an invoice
-                    </Button>
-                  </Link>
-                </CardContent>
+                {paymentsPaid.length === 0 &&
+                  paymentsProcessing.length === 0 && (
+                    <CardContent className="flex flex-col items-center justify-center p-0">
+                      <NotFound message="No payments are being processed at the moment." />
+                      <Link href="/studio/invoices">
+                        <Button variant="link" className="my-3">
+                          Create an invoice
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  )}
+                {(paymentsPaid.length > 0 || paymentsProcessing.length > 0) && (
+                  <CardContent className="p-0">
+                    {paymentsPaid.map((payment) => (
+                      <PaymentMenuItem
+                        key={payment.id}
+                        paymentId={payment.id}
+                      />
+                    ))}
+                    {paymentsProcessing.map((payment) => (
+                      <PaymentMenuItem
+                        key={payment.id}
+                        paymentId={payment.id}
+                      />
+                    ))}
+                  </CardContent>
+                )}
               </Card>
             </TabsContent>
 
             <TabsContent value="upcoming">
               <Card className="flex h-full flex-col justify-between rounded-sm shadow">
                 <CardHeader>
-                  <CardTitle>Upcoming</CardTitle>
                   <CardDescription>
                     Payments that are scheduled to be paid in the future.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="flex flex-col items-center justify-center p-0">
-                  <NotFound message="No payments scheduled for the rest of this month." />
-                  <Link href="/studio/invoices">
-                    <Button variant="link" className="mt-3">
-                      Create an invoice
-                    </Button>
-                  </Link>
-                </CardContent>
+                {paymentsUpcoming.length === 0 && (
+                  <CardContent className="flex flex-col items-center justify-center p-0">
+                    <NotFound message="No payments scheduled for the rest of this month." />
+                    <Link href="/studio/invoices">
+                      <Button variant="link" className="mt-3">
+                        Create an invoice
+                      </Button>
+                    </Link>
+                  </CardContent>
+                )}
+                {paymentsUpcoming.length > 0 && (
+                  <CardContent className="p-0">
+                    {paymentsUpcoming.map((payment) => (
+                      <PaymentMenuItem
+                        key={payment.id}
+                        paymentId={payment.id}
+                      />
+                    ))}
+                  </CardContent>
+                )}
               </Card>
             </TabsContent>
 
             <TabsContent value="overdue">
               <Card className="flex h-full flex-col justify-between rounded-sm shadow">
                 <CardHeader>
-                  <CardTitle>Overdue</CardTitle>
                   <CardDescription>
                     Payments that are past their due date.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="flex flex-col items-center justify-center p-0">
-                  <NotFound message="No overdue payments this month." />
-
-                  <Link href="/studio/invoices">
-                    <Button variant="link" className="my-3">
-                      Create an invoice
-                    </Button>
-                  </Link>
-                </CardContent>
+                {paymentsOverdue.length === 0 && (
+                  <CardContent className="flex flex-col items-center justify-center p-0">
+                    <NotFound message="No overdue payments this month." />
+                    <Link href="/studio/invoices">
+                      <Button variant="link" className="my-3">
+                        Create an invoice
+                      </Button>
+                    </Link>
+                  </CardContent>
+                )}
+                {paymentsOverdue.length > 0 && (
+                  <CardContent className="p-0">
+                    {paymentsOverdue.map((payment) => (
+                      <PaymentMenuItem
+                        key={payment.id}
+                        payment={payment}
+                        project={
+                          projects?.find(
+                            (project) => project.id === payment.projectId,
+                          ) ?? undefined
+                        }
+                      />
+                    ))}
+                  </CardContent>
+                )}
               </Card>
             </TabsContent>
           </Tabs>

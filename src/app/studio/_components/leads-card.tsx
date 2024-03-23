@@ -20,7 +20,7 @@ import { api } from "~/trpc/server";
 
 function NotFound() {
   return (
-    <div className="flex flex-col items-center space-y-3">
+    <div className="my-10 flex flex-col items-center space-y-3">
       <Image
         src="/images/well-done.svg"
         width={125}
@@ -103,7 +103,7 @@ export default async function LeadsCard(props: { agencyId: string }) {
         </CardContent>
       )}
 
-      <CardFooter className="p-0">
+      <CardFooter className="mt-auto p-0">
         <Link href="/studio/pipeline" passHref>
           <Button variant="link" className="flex space-x-2">
             <span>Go to pipeline</span>

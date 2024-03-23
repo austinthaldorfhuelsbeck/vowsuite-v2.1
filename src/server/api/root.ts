@@ -3,7 +3,9 @@ import { agencyRouter } from "./routers/agency";
 import { collectionRouter } from "./routers/collection";
 import { eventRouter } from "./routers/event";
 import { messageRouter } from "./routers/message";
+import { paymentRouter } from "./routers/payment";
 import { projectRouter } from "./routers/project";
+import { taskRouter } from "./routers/task";
 import { userRouter } from "./routers/user";
 
 /**
@@ -18,6 +20,8 @@ export const appRouter = createTRPCRouter({
   collections: collectionRouter,
   messages: messageRouter,
   events: eventRouter,
+  tasks: taskRouter,
+  payments: paymentRouter,
 });
 
 // export type definition of API

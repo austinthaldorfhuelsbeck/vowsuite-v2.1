@@ -15,6 +15,7 @@ model User {
   permissions   Permission[]
   messages      Message[]
   notifications Notification[]
+  tasks         Task[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
@@ -52,11 +53,11 @@ model Agency {
 }
 
 model Contact {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   firstName String
   lastName  String
   avatar    String?
-  email     String   @unique
+  email     String    @unique
   phone     String?
   address   String?
   city      String?
@@ -64,10 +65,11 @@ model Contact {
   zip       String?
   country   String?
   projectId String
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
   messages  Message[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  payments  Payment[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@index([projectId])
 }
@@ -82,22 +84,24 @@ enum Stage {
 }
 
 model Project {
-  id            String       @id @default(uuid())
-  name          String
-  email         String       @unique
-  avatar        String?
-  description   String
-  notes         String
-  agencyId      String
-  agency        Agency       @relation(fields: [agencyId], references: [id])
-  event         Event?
-  collection    Collection?
-  stage         Stage
-  contacts      Contact[]
-  permissions   Permission[]
-  messages      Message[]
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  id          String       @id @default(uuid())
+  name        String
+  email       String       @unique
+  avatar      String?
+  description String
+  notes       String
+  agencyId    String
+  agency      Agency       @relation(fields: [agencyId], references: [id])
+  event       Event?
+  collection  Collection?
+  stage       Stage
+  contacts    Contact[]
+  permissions Permission[]
+  messages    Message[]
+  tasks       Task[]
+  payments    Payment[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 
   @@index([agencyId])
 }
@@ -149,9 +153,9 @@ model Permission {
 model Message {
   id        String   @id @default(uuid())
   userId    String?
-  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   contactId String?
-  contact   Contact?  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  contact   Contact? @relation(fields: [contactId], references: [id], onDelete: Cascade)
   projectId String
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   message   String
@@ -160,6 +164,47 @@ model Message {
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+  @@index([projectId])
+}
+
+model Task {
+  id          String   @id @default(uuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String
+  dueDate     DateTime
+  completed   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([projectId])
+}
+
+enum Status {
+  PAID
+  PENDING
+  FAILED
+  REFUNDED
+  CANCELED
+}
+
+model Payment {
+  id        String   @id @default(uuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  contactId String?
+  contact   Contact? @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  amount    Float
+  date      DateTime
+  status    Status?
+  method    String
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([projectId])
 }
 
@@ -174,3 +219,4 @@ model Notification {
 
   @@index([userId, read])
 }
+

@@ -66,7 +66,7 @@ function LinksCard(props: {
 }) {
   return (
     <Card className="rounded-sm shadow">
-      <CardHeader className="px-3 pb-0 pt-2">
+      <CardHeader className="px-3 pb-0 pt-2 xl:hidden">
         <h2 className="text-lg font-bold">{props.title}</h2>
       </CardHeader>
       <CardContent className="grid h-full grid-cols-2 gap-3 p-3">
@@ -172,7 +172,7 @@ export default async function Studio() {
           </div>
 
           <div className="hidden sm:inline-block">
-            <TasksCard agencyId={userFromDb.agencyId} />
+            <TasksCard userId={userFromDb.id} />
           </div>
 
           <div className="sm:col-span-2 xl:col-span-3">
