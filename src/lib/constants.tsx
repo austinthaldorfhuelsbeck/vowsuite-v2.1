@@ -223,3 +223,39 @@ export const studioNavigation: {
     description: "Customize your agency profile, logo, and brand colors.",
   },
 ];
+
+// Studio Dashboard Card configurations
+export const leadsCardConfig = {
+  tooltipContent: "Potential clients who have shown interest.",
+  noDataSrc: "/images/well-done.svg",
+  noDataAlt:
+    "Relaxing with balloons, leaning on an empty notifications window",
+  noDataText: "You've handled everything. Great job! 🎉",
+  footerLink: "/studio/pipeline",
+  footerText: "Go to pipeline",
+};
+export const upcomingEventsCardConfig = {
+  tooltipContent: "Projects with an event that is in the future.",
+  noDataSrc: "/images/walking-outside.svg",
+  noDataAlt: "Walking outside with trees, birds, and a sun in the background",
+  noDataText: "There are no upcoming events. Let's find more clients! 🏃‍♀",
+  footerLink: "/studio/calendar",
+  footerText: "Go to calendar",
+};
+export const messagesCardConfig = {
+  tooltipContent: "Unread messages from your projects.",
+  noDataSrc: "/images/done-checking.svg",
+  noDataAlt: "Looking up at three floating checked tasks",
+  noDataText: "You've read all your messages. Way to go! 📬",
+  footerLink: "/studio/pipeline",
+  footerText: "Go to pipeline",
+};
+export const tasksCardConfig = {
+  tooltipContent: "Open tasks assigned to you.",
+  noDataSrc: "/images/relaxation.svg",
+  noDataAlt:
+    "Relaxing on a hammock talking together as the sun sets in the background",
+  noDataText: "You've handled everything. Take a break! 🌅",
+  footerLink: "/studio/tasks",
+  footerText: "Go to tasks",
+};
