@@ -28,7 +28,9 @@ function NotFound() {
         alt="Relaxing on a hammock talking together as the sun sets in the background"
       />
       <p className="text-center text-sm text-muted-foreground">
-        You&#39;ve handled everything. <br /> Take a break! 🌅
+        You&#39;ve handled everything.
+        <br />
+        Take a break! 🌅
       </p>
     </div>
   );

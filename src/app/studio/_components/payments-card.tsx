@@ -4,16 +4,19 @@ import {
   CircleIcon,
   InfoIcon,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
 import { Separator } from "~/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import {
   Tooltip,
   TooltipContent,
@@ -21,6 +24,22 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import { api } from "~/trpc/server";
+
+function NotFound(props: { message?: JSX.Element }) {
+  return (
+    <div className="mt-10 flex flex-col items-center space-y-3">
+      <Image
+        src="/images/no-data.svg"
+        width={125}
+        height={125}
+        alt="Two empty clipboards"
+      />
+      <p className="text-center text-sm text-muted-foreground">
+        {props.message ?? <p>No payments found.</p>}
+      </p>
+    </div>
+  );
+}
 
 async function SubtotalMenuItem(props: {
   title: string;
@@ -149,12 +168,93 @@ export default async function PaymentsCard(props: { agencyId: string }) {
               <div className="mt-2 text-3xl font-semibold">$0</div>
             </>
           </div>
-          <div className="hidden flex-1 bg-green-400 xl:inline-block"></div>
+
+          <Tabs defaultValue="paid" className="hidden xl:inline-block">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="paid">{`Paid/Processing (${payments.length})`}</TabsTrigger>
+              <TabsTrigger value="upcoming">{`Upcoming (${payments.length})`}</TabsTrigger>
+              <TabsTrigger value="overdue">{`Overdue (${payments.length})`}</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="paid">
+              <Card className="flex h-full flex-col justify-between rounded-sm shadow">
+                <CardHeader>
+                  <CardTitle>Paid/Processing</CardTitle>
+                  <CardDescription>
+                    Payments that have been paid or are currently processing.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center justify-center p-0">
+                  <NotFound
+                    message={
+                      <p>
+                        It&#39;s a quiet month.
+                        <br />
+                        No payments are being processed at the moment.
+                      </p>
+                    }
+                  />
+                  <Link href="/studio/invoices">
+                    <Button variant="link" className="my-3">
+                      Create an invoice
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="upcoming">
+              <Card className="flex h-full flex-col justify-between rounded-sm shadow">
+                <CardHeader>
+                  <CardTitle>Upcoming</CardTitle>
+                  <CardDescription>
+                    Payments that are scheduled to be paid in the future.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center justify-center p-0">
+                  <NotFound
+                    message={
+                      <p>
+                        No upcoming payments.
+                        <br />
+                        Keep an eye on this space for future payments.
+                      </p>
+                    }
+                  />
+                  <Link href="/studio/invoices">
+                    <Button variant="link" className="mt-3">
+                      Create an invoice
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="overdue">
+              <Card className="flex h-full flex-col justify-between rounded-sm shadow">
+                <CardHeader>
+                  <CardTitle>Overdue</CardTitle>
+                  <CardDescription>
+                    Payments that are past their due date.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center justify-center p-0">
+                  <NotFound message={<p>No overdue payments this month.</p>} />
+
+                  <Link href="/studio/invoices">
+                    <Button variant="link" className="my-3">
+                      Create an invoice
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </CardContent>
 
       <CardFooter className="mt-auto p-0">
-        <Link href="/studio/payments" passHref>
+        <Link href="/studio/payments">
           <Button variant="link" className="flex space-x-2">
             <span>Go to payments</span>
             <ArrowRightIcon size={16} />
