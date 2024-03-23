@@ -6,7 +6,13 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
-import { Card, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
 import { Separator } from "~/components/ui/separator";
 import {
   Tooltip,
@@ -24,7 +30,11 @@ async function SubtotalMenuItem(props: {
   return (
     <div className="flex flex-col space-y-1">
       <p className="flex space-x-1">
-        <CircleIcon size={12} className={`my-auto text-${props.color}-500`} />
+        <CircleIcon
+          size={12}
+          className="my-auto"
+          style={{ color: props.color }}
+        />
         <span className="text-sm text-muted-foreground">{props.title}</span>
       </p>
       <div className="font-semibold">{`$${props.amount}`}</div>
@@ -42,27 +52,27 @@ export default async function PaymentsCard(props: { agencyId: string }) {
     {
       title: "Paid",
       amount: 0,
-      color: "green",
+      color: "#22c55e",
     },
     {
       title: "Processing",
       amount: 0,
-      color: "yellow",
+      color: "#fbbf24",
     },
     {
       title: "Upcoming",
       amount: 0,
-      color: "stone",
+      color: "#78716c",
     },
     {
       title: "Overdue",
       amount: 0,
-      color: "red",
+      color: "#dc2626",
     },
   ];
 
   return (
-    <Card className="rounded-sm shadow">
+    <Card className="flex h-full flex-col justify-between rounded-sm shadow">
       <CardHeader>
         <TooltipProvider>
           <Tooltip>
@@ -81,42 +91,69 @@ export default async function PaymentsCard(props: { agencyId: string }) {
           </Tooltip>
         </TooltipProvider>
       </CardHeader>
-      <Separator />
-      <div className="flex px-5 pt-3">
-        <div className="flex-1">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <h2 className="flex space-x-2 text-sm text-muted-foreground">
-                  <span>{`${new Date().toLocaleDateString("en-us", {
-                    month: "long",
-                  })} gross payments`}</span>
-                  <CircleHelpIcon size={16} className="my-auto" />
-                </h2>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>
-                  {`This includes the gross amount of all payments made during ${new Date().toLocaleDateString("en-us", { month: "long" })}.`}
-                </p>
-                <br />
-                <ul style={{ listStyle: "inside" }}>
-                  <li>Includes tips, fees, taxes, and discounts.</li>
-                  <li>Does not include chargebacks or refunds.</li>
-                </ul>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <div className="mt-2 text-3xl font-semibold">$0</div>
 
-          <div className="grid grid-cols-2 gap-2">
-            {subtotalMenuItems.map((item) => (
-              <SubtotalMenuItem key={item.title} {...item} />
-            ))}
+      <Separator />
+
+      <CardContent className="my-auto px-0">
+        <div className="flex px-5 pt-3">
+          <div className="flex flex-1 flex-col space-y-3">
+            <>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <h2 className="flex space-x-2 text-sm text-muted-foreground">
+                      <span>{`${new Date().toLocaleDateString("en-us", {
+                        month: "long",
+                      })} gross payments`}</span>
+                      <CircleHelpIcon size={16} className="my-auto" />
+                    </h2>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      {`This includes the gross amount of all payments made during ${new Date().toLocaleDateString("en-us", { month: "long" })}.`}
+                    </p>
+                    <br />
+                    <ul style={{ listStyle: "inside" }}>
+                      <li>Includes tips, fees, taxes, and discounts.</li>
+                      <li>Does not include chargebacks or refunds.</li>
+                    </ul>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <div className="mt-2 text-3xl font-semibold">$0</div>
+            </>
+
+            <div className="grid grid-cols-2 gap-2">
+              {subtotalMenuItems.map((item) => (
+                <SubtotalMenuItem key={item.title} {...item} />
+              ))}
+            </div>
+
+            <>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <h2 className="flex space-x-2 text-sm text-muted-foreground">
+                      <span>{`Total overdue payments (${payments.length})`}</span>
+                      <CircleHelpIcon size={16} className="my-auto" />
+                    </h2>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      This includes the total amount of all overdue payments,
+                      including this month and previous months.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <div className="mt-2 text-3xl font-semibold">$0</div>
+            </>
           </div>
+          <div className="hidden flex-1 bg-green-400 xl:inline-block"></div>
         </div>
-        <div className="flex-1 bg-green-400"></div>
-      </div>
-      <CardFooter className="p-0">
+      </CardContent>
+
+      <CardFooter className="mt-auto p-0">
         <Link href="/studio/payments" passHref>
           <Button variant="link" className="flex space-x-2">
             <span>Go to payments</span>

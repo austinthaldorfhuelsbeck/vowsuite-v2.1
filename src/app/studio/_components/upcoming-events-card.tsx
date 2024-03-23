@@ -21,7 +21,7 @@ import { api } from "~/trpc/server";
 
 function NotFound() {
   return (
-    <div className="my-10 flex flex-col items-center space-y-3">
+    <div className="flex flex-col items-center space-y-3">
       <Image
         src="/images/walking-outside.svg"
         width={125}
@@ -69,7 +69,7 @@ export default async function UpcomingEventsCard(props: { agencyId: string }) {
     .filter((event) => event?.date && event.date > new Date());
 
   return (
-    <Card className="h-full rounded-sm shadow">
+    <Card className="flex h-full flex-col justify-between rounded-sm shadow">
       <CardHeader>
         <TooltipProvider>
           <Tooltip>
@@ -85,9 +85,11 @@ export default async function UpcomingEventsCard(props: { agencyId: string }) {
           </Tooltip>
         </TooltipProvider>
       </CardHeader>
+
       <Separator />
+
       {upcomingEvents?.length === 0 && (
-        <CardContent className="flex items-center justify-center p-0">
+        <CardContent className="my-10 flex items-center justify-center p-0">
           <NotFound />
         </CardContent>
       )}
@@ -99,7 +101,8 @@ export default async function UpcomingEventsCard(props: { agencyId: string }) {
           })}
         </CardContent>
       )}
-      <CardFooter className="p-0">
+
+      <CardFooter className="mt-auto p-0">
         <Link href="/studio/calendar" passHref>
           <Button variant="link" className="flex space-x-2">
             <span>Go to calendar</span>

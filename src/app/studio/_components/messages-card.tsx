@@ -79,7 +79,7 @@ export default async function MessagesCard(props: { agencyId: string }) {
     .filter((message) => !message.read);
 
   return (
-    <Card className="rounded-sm shadow">
+    <Card className="flex h-full flex-col justify-between rounded-sm shadow">
       <CardHeader>
         <TooltipProvider>
           <Tooltip>
@@ -95,20 +95,22 @@ export default async function MessagesCard(props: { agencyId: string }) {
           </Tooltip>
         </TooltipProvider>
       </CardHeader>
+
       <Separator />
+
       {unreadMessages?.length === 0 && (
-        <CardContent className="flex items-center justify-center p-0">
+        <CardContent className="my-10 flex items-center justify-center p-0">
           <NotFound />
         </CardContent>
       )}
       {unreadMessages && unreadMessages.length > 0 && (
         <CardContent className="p-0">
           {unreadMessages.map((message) => {
-            // return <MessageMenuItem key={message.id} messageId={message.id} />;
             return <MessageMenuItem key={message.id} messageId={message.id} />;
           })}
         </CardContent>
       )}
+
       <CardFooter className="p-0">
         <Link href="/studio/pipeline" passHref>
           <Button variant="link" className="flex space-x-2">

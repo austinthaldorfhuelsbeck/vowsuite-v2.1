@@ -20,7 +20,7 @@ import { api } from "~/trpc/server";
 
 function NotFound() {
   return (
-    <div className="my-10 flex flex-col items-center space-y-3">
+    <div className="flex flex-col items-center space-y-3">
       <Image
         src="/images/well-done.svg"
         width={125}
@@ -34,8 +34,8 @@ function NotFound() {
   );
 }
 
-async function LeadMenuItem(props: { projectId: string }) {
-  const project = await api.projects.getById({ id: props.projectId });
+async function LeadMenuItem(props: { leadId: string }) {
+  const project = await api.projects.getById({ id: props.leadId });
 
   if (!project) return null;
 
@@ -68,38 +68,41 @@ export default async function LeadsCard(props: { agencyId: string }) {
   )?.filter((project) => project.stage === "LEAD");
 
   return (
-    <Card className="h-full rounded-sm shadow">
+    <Card className="flex h-full flex-col justify-between rounded-sm shadow">
       <CardHeader>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <CardTitle className="mr-auto flex space-x-2">
-                <span>{`Leads (${leads?.length})`}</span>
+                <span>{`Leads (${leads?.length ?? 0})`}</span>
                 <InfoIcon size={16} className="my-auto" />
               </CardTitle>
             </TooltipTrigger>
             <TooltipContent>
               <p>
-                Leads are potential clients who have shown interest through lead
+                Potential clients who have shown interest through interest
                 forms.
               </p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </CardHeader>
+
       <Separator />
+
       {leads?.length === 0 && (
-        <CardContent className="flex items-center justify-center p-0">
+        <CardContent className="my-10 mt-auto flex items-center justify-center p-0">
           <NotFound />
         </CardContent>
       )}
       {leads && leads.length > 0 && (
         <CardContent className="p-0">
-          {leads.map((project) => {
-            return <LeadMenuItem key={project.id} projectId={project.id} />;
+          {leads.map((lead) => {
+            return <LeadMenuItem key={lead.id} leadId={lead.id} />;
           })}
         </CardContent>
       )}
+
       <CardFooter className="p-0">
         <Link href="/studio/pipeline" passHref>
           <Button variant="link" className="flex space-x-2">

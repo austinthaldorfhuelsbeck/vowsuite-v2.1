@@ -151,16 +151,12 @@ export default async function Studio() {
         <UpcomingEventsCard agencyId={userFromDb.agencyId} />
       </div>
 
+      <div className="hidden sm:row-span-1 sm:inline-block xl:col-span-1 xl:row-span-2">
+        <MessagesCard agencyId={userFromDb.agencyId} />
+      </div>
+
       <div className="sm:row-span-1">
         <LinksCard {...createCardConfig} />
-      </div>
-
-      <div className="sm:row-span-1 xl:hidden">
-        <LinksCard {...exploreCardConfig} />
-      </div>
-
-      <div className="hidden sm:col-span-2 sm:inline-block xl:col-span-1 xl:row-span-2">
-        <MessagesCard agencyId={userFromDb.agencyId} />
       </div>
 
       <div className="hidden sm:col-span-1 sm:inline-block xl:col-span-2 xl:row-span-2">
@@ -171,7 +167,7 @@ export default async function Studio() {
         <TasksCard agencyId={userFromDb.agencyId} />
       </div>
 
-      <div className="col-span-3 hidden xl:inline-block">
+      <div className="sm:col-span-2 xl:col-span-3">
         <LinksCard {...exploreCardConfig} />
       </div>
     </div>
