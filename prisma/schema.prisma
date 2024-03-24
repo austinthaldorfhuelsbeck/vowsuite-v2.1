@@ -161,7 +161,8 @@ model Message {
   contact   Contact? @relation(fields: [contactId], references: [id], onDelete: Cascade)
   projectId String
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  message   String
+  subject   String
+  body      String   @db.Text
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
