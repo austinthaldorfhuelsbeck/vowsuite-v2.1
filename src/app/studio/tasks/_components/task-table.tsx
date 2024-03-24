@@ -32,6 +32,8 @@ import {
 import type { TaskWithData } from "~/types";
 import useFilterTasks from "../_hooks/useFilterTasks";
 import CreateTaskButton from "./create-task-button";
+import TaskCheckButton from "./task-check-button";
+import { TaskNameInput } from "./task-name-input";
 
 export default function TaskTable(props: {
   tasks: (TaskWithData | undefined)[];
@@ -160,20 +162,59 @@ export default function TaskTable(props: {
                     className={`text-xs tracking-wider ${task.completed && "text-muted-foreground hover:bg-transparent"}`}
                   >
                     <TableCell>
-                      {task.completed && (
-                        <CircleCheckIcon size={20} className="m-auto" />
-                      )}
-                      {!task.completed && (
-                        <CircleIcon
-                          size={20}
-                          className="m-auto cursor-pointer"
-                        />
-                      )}
+                      <TaskCheckButton
+                        taskId={task.id}
+                        onCompletedChange={
+                          task.completed
+                            ? () => {
+                                setFilteredTasks((tasks) =>
+                                  tasks.map((t) =>
+                                    t?.id === task.id
+                                      ? { ...task, completed: false }
+                                      : t,
+                                  ),
+                                );
+                              }
+                            : () => {
+                                setFilteredTasks((tasks) =>
+                                  tasks.map((t) =>
+                                    t?.id === task.id
+                                      ? { ...task, completed: true }
+                                      : t,
+                                  ),
+                                );
+                                if (hideCompleted)
+                                  setFilteredTasks((tasks) =>
+                                    tasks.filter((t) => !t?.completed),
+                                  );
+                              }
+                        }
+                      >
+                        {task.completed && (
+                          <CircleCheckIcon size={20} className="m-auto" />
+                        )}
+                        {!task.completed && (
+                          <CircleIcon
+                            size={20}
+                            className="m-auto cursor-pointer"
+                          />
+                        )}
+                      </TaskCheckButton>
                     </TableCell>
                     <TableCell>
-                      <p className={`${task.completed && "line-through"}`}>
-                        {task.title}
-                      </p>
+                      <TaskNameInput
+                        taskId={task.id}
+                        initialName={task.title}
+                        onNameChange={(newName) => {
+                          setFilteredTasks((tasks) =>
+                            tasks.map((t) =>
+                              t?.id === task.id
+                                ? { ...task, title: newName }
+                                : t,
+                            ),
+                          );
+                        }}
+                      />
                     </TableCell>
                     <TableCell>
                       {task.dueDate.toLocaleDateString("en-US", {
@@ -183,7 +224,7 @@ export default function TaskTable(props: {
                       })}
                     </TableCell>
                     <TableCell>
-                      <div className="flex gap-5">
+                      <div className="flex items-center gap-5">
                         <p>{task.project?.name}</p>
                         <Link href={`/studio/project/${task.project?.id}`}>
                           <ArrowUpRightFromSquareIcon className="my-auto h-4 w-4" />
