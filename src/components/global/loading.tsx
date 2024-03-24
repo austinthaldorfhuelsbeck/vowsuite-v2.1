@@ -24,7 +24,7 @@ export const LoadingSpinner = (props: { size?: number }) => (
 
 export const LoadingPage = () => {
   return (
-    <div className="flex h-full w-full items-center justify-center">
+    <div className="flex h-screen w-full items-center justify-center">
       <LoadingSpinner size={80} />
     </div>
   );

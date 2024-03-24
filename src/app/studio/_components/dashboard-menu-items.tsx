@@ -1,24 +1,24 @@
-import { type Event, type Project, type Task } from "@prisma/client";
+import { type Event } from "@prisma/client";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { api } from "~/trpc/server";
+import {
+  type MessageWithData,
+  type ProjectWithData,
+  type TaskWithData,
+} from "~/types";
 
-export async function LeadMenuItem(props: { leadId: string }) {
-  const project = await api.projects.getById({ id: props.leadId });
-
-  if (!project) return null;
-
+export async function LeadMenuItem(props: { lead: ProjectWithData }) {
   return (
-    <Link href={`/studio/project/${project.id}`} passHref>
+    <Link href={`/studio/project/${props.lead.id}`} passHref>
       <div className="flex cursor-pointer justify-between p-3 transition-all ease-in-out hover:bg-secondary">
         <div className="flex flex-col space-y-1">
-          <p className="text-sm">{project.name}</p>
+          <p className="text-sm">{props.lead.name}</p>
           <p className="text-xs text-muted-foreground">
-            {project.event?.location}
+            {props.lead.event?.location}
           </p>
         </div>
         <p className="my-auto text-xs text-muted-foreground">
-          {project.event?.date.toLocaleDateString("en-us", {
+          {props.lead.event?.date.toLocaleDateString("en-us", {
             year: "numeric",
             month: "short",
             day: "numeric",
@@ -29,7 +29,7 @@ export async function LeadMenuItem(props: { leadId: string }) {
   );
 }
 
-export async function EventMenuItem(props: { event: Event }) {
+export function EventMenuItem(props: { event: Event }) {
   return (
     <Link href={`/studio/event/${props.event.id}`} passHref>
       <div className="border-1 mx-3 my-2 flex cursor-pointer justify-between rounded border transition-all ease-in-out hover:bg-secondary">
@@ -54,31 +54,27 @@ export async function EventMenuItem(props: { event: Event }) {
   );
 }
 
-export async function MessageMenuItem(props: { messageId: string }) {
-  const message = await api.messages.getById({ id: props.messageId });
-
-  if (!message?.contact) return null;
-
+export function MessageMenuItem(props: { message: MessageWithData }) {
   return (
-    <Link href={`/studio/message/${message.id}`} passHref>
+    <Link href={`/studio/message/${props.message.id}`} passHref>
       <div className="flex cursor-pointer justify-between p-3 transition-all ease-in-out hover:bg-secondary">
         <Avatar className="mr-3">
           <AvatarImage
-            src={message.contact.avatar ?? undefined}
+            src={props.message.contact?.avatar ?? undefined}
             alt="Contact avatar"
           />
           <AvatarFallback>
-            {`${message.contact.firstName[0]}${message.contact.lastName[0]}`}
+            {`${props.message.contact?.firstName[0]}${props.message.contact?.lastName[0]}`}
           </AvatarFallback>
         </Avatar>
         <div className="mr-auto flex flex-col space-y-1">
-          <p className="text-sm">{`${message.contact.firstName} ${message.contact.lastName}`}</p>
+          <p className="text-sm">{`${props.message.contact?.firstName} ${props.message.contact?.lastName}`}</p>
           <p className="text-xs text-muted-foreground">
-            {message.project?.name}
+            {props.message.project.name}
           </p>
         </div>
         <p className="my-auto text-xs text-muted-foreground">
-          {message.createdAt.toLocaleDateString("en-us", {
+          {props.message.createdAt.toLocaleDateString("en-us", {
             year: "numeric",
             month: "short",
             day: "numeric",
@@ -89,14 +85,14 @@ export async function MessageMenuItem(props: { messageId: string }) {
   );
 }
 
-export function TaskMenuItem(props: { task: Task; project?: Project }) {
+export function TaskMenuItem(props: { task: TaskWithData }) {
   return (
     <Link href={`/studio/task/${props.task.id}`} passHref>
       <div className="flex cursor-pointer justify-between p-3 transition-all ease-in-out hover:bg-secondary">
         <div className="flex flex-col space-y-1">
           <p className="text-sm">{props.task.title}</p>
           <p className="text-xs text-muted-foreground">
-            {props.project?.name ?? "No project"}
+            {props.task.project?.name ?? "No project"}
           </p>
         </div>
         <p className="my-auto text-xs text-muted-foreground">

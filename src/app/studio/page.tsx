@@ -1,5 +1,11 @@
-import { currentUser } from "@clerk/nextjs";
+"use client";
+
+import { useUser } from "@clerk/nextjs";
+import { useEffect } from "react";
+import { LoadingPage } from "~/components/global/loading";
+import NoResults from "~/components/global/no-results";
 import ServerError from "~/components/global/server-error";
+import { Skeleton } from "~/components/ui/skeleton";
 import {
   createCardConfig,
   exploreCardConfig,
@@ -8,7 +14,8 @@ import {
   tasksCardConfig,
   upcomingEventsCardConfig,
 } from "~/lib/constants";
-import { api } from "~/trpc/server";
+import { api } from "~/trpc/react";
+import { type MessageWithData } from "~/types";
 import { DashboardCard } from "./_components/dashboard-card";
 import DashboardHeader from "./_components/dashboard-header";
 import DashboardLinksCard from "./_components/dashboard-links-card";
@@ -22,43 +29,47 @@ import MobileAppAlert from "./_components/mobile-app-alert";
 import PaymentsCard from "./_components/payments-card";
 import StatsCard from "./_components/stats-card";
 
-// uses tailwind queries to render three distinct layouts:
-// mobile, tablet, and desktop
-export default async function Studio() {
-  const user = await currentUser();
-  const userEmail = user?.emailAddresses[0]?.emailAddress ?? "";
+export default function Studio() {
+  const { user: clerkUser, isLoaded: clerkUserIsLoaded } = useUser();
+  const getOrCreateByEmailMutation = api.user.getOrCreateByEmail.useMutation();
+  const email = clerkUser?.emailAddresses[0]?.emailAddress;
 
-  // This function will load the user from the database if it exists,
-  // or create it if it doesn't and also create a new agency
-  const loadOrCreateUser = async (email: string) => {
-    const userResponse = await api.user.getByEmail({
-      email,
-    });
+  useEffect(() => {
+    if (email) getOrCreateByEmailMutation.mutate({ email });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [email]);
 
-    if (!userResponse) {
-      const newUserResponse = await api.user.createByEmail({
-        email,
-      });
+  const userFromDb = getOrCreateByEmailMutation.data;
 
-      const newAgencyResponse = await api.agency.createByUser({
-        firstName: user?.firstName ?? "New User",
-        email,
-      });
+  const projectsQuery = api.projects.getByAgencyId.useQuery({
+    agencyId: userFromDb?.agencyId ?? "",
+  });
+  const leads = projectsQuery.data?.filter(
+    (project) => project.stage === "LEAD",
+  );
+  const unreadMessages = projectsQuery.data
+    ?.flatMap((project) => project.messages)
+    .filter((message) => !message.read);
+  const upcomingEvents = projectsQuery.data
+    ?.flatMap((project) => project.event)
+    .filter((event) => event?.date && event.date > new Date());
 
-      const updatedUserResponse = await api.user.addAgency({
-        userId: newUserResponse.id,
-        agencyId: newAgencyResponse.id,
-      });
+  const tasksQuery = api.tasks.getByUserId.useQuery({
+    userId: userFromDb?.id ?? "",
+  });
+  const uncompletedTasks = tasksQuery.data?.filter((task) => !task.completed);
 
-      return updatedUserResponse;
-    }
+  if (!clerkUserIsLoaded) return <LoadingPage />;
 
-    return userResponse;
-  };
+  if (!clerkUser)
+    return (
+      <ServerError
+        code={401}
+        message="You are unauthorized to make that request."
+      />
+    );
 
-  const userFromDb = await loadOrCreateUser(userEmail);
-
-  if (!user || !userFromDb.agencyId)
+  if (getOrCreateByEmailMutation.error)
     return (
       <ServerError
         code={500}
@@ -66,51 +77,35 @@ export default async function Studio() {
       />
     );
 
-  // Fetch data for cards
-  const projects = await api.projects.getByAgencyId({
-    agencyId: userFromDb.agencyId,
-  });
-
-  const leads = projects?.filter((project) => project.stage === "LEAD");
-  const leadsData = leads?.map((lead) => (
-    <LeadMenuItem key={lead.id} leadId={lead.id} />
-  ));
-
-  const upcomingEvents = projects
-    ?.flatMap((project) => project.event)
-    .filter((event) => event?.date && event.date > new Date());
-  const upcomingEventsData = upcomingEvents?.map(
-    (event) => event && <EventMenuItem key={event?.id} event={event} />,
-  );
-
-  const unreadMessages = projects
-    ?.flatMap((project) => project.messages)
-    .filter((message) => !message.read);
-  const messagesData = unreadMessages?.map((message) => (
-    <MessageMenuItem key={message.id} messageId={message.id} />
-  ));
-
-  const tasks = (
-    await api.tasks.getByUserId({
-      userId: userFromDb.id,
-    })
-  ).filter((task) => !task.completed);
-  const tasksData = tasks?.map((task) => (
-    <TaskMenuItem
-      key={task.id}
-      task={task}
-      project={task.project ?? undefined}
-    />
-  ));
+  // uses tRPC conditions and Skeleton components to render all loading states
+  // Uses tailwind queries to render three distinct layouts:
+  // mobile, tablet, and desktop
 
   return (
     <>
       <div className="flex flex-col gap-5 sm:grid sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
         <div className="sm:col-span-2 xl:col-span-3">
-          <DashboardHeader
-            firstName={user.firstName}
-            agency={userFromDb.agency}
-          />
+          {userFromDb && (
+            <DashboardHeader
+              firstName={userFromDb.firstName}
+              agencyName={userFromDb.agency?.name}
+              agencyAvatar={userFromDb.agency?.avatar ?? undefined}
+            />
+          )}
+          {!userFromDb && (
+            <div className="flex items-center gap-3">
+              <Skeleton className="ml-1 mr-4 h-16 w-16 rounded" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-[150px]" />
+                <Skeleton className="h-6 w-[250px]" />
+                <Skeleton className="h-4 w-[250px]" />
+              </div>
+              <div className="ml-auto mr-1 flex flex-col items-center space-y-2">
+                <Skeleton className="h-12 w-12 rounded-full" />
+                <Skeleton className="h-4 w-[100px]" />
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="inline-block sm:hidden">
@@ -119,58 +114,144 @@ export default async function Studio() {
 
         {/* Stats Card */}
         <div className="mt-0 hidden sm:col-span-2 sm:inline-block xl:col-span-3">
-          <StatsCard agencyId={userFromDb.agencyId} />
+          {(!userFromDb || projectsQuery.isLoading) && (
+            <Skeleton className="h-28 w-full rounded" />
+          )}
+          {userFromDb && projectsQuery.isSuccess && leads && unreadMessages && (
+            <StatsCard leads={leads} messages={unreadMessages} />
+          )}
         </div>
 
         {/* Leads Card */}
         <div className="hidden sm:row-span-2 sm:inline-block">
-          <DashboardCard
-            {...leadsCardConfig}
-            title={`Leads (${leads?.length})`}
-            data={leadsData}
-          />
+          {(!userFromDb || projectsQuery.isLoading) && (
+            <Skeleton className="h-64 w-full rounded" />
+          )}
+          {userFromDb && projectsQuery.isSuccess && leads && (
+            <DashboardCard
+              {...leadsCardConfig}
+              title={`Leads (${leads?.length})`}
+            >
+              {leads.length ? (
+                leads.map((lead) => <LeadMenuItem key={lead.id} lead={lead} />)
+              ) : (
+                <div className="my-10 mt-auto flex items-center justify-center">
+                  <NoResults
+                    src={leadsCardConfig.noDataSrc}
+                    alt={leadsCardConfig.noDataAlt}
+                    text={leadsCardConfig.noDataText}
+                  />
+                </div>
+              )}
+            </DashboardCard>
+          )}
         </div>
 
         {/* Upcoming Events Card */}
         <div className="hidden sm:row-span-2 sm:inline-block">
-          <DashboardCard
-            {...upcomingEventsCardConfig}
-            title={`Upcoming Events (${upcomingEvents?.length})`}
-            data={upcomingEventsData}
-          />
+          {(!userFromDb || projectsQuery.isLoading) && (
+            <Skeleton className="h-64 w-full rounded" />
+          )}
+          {userFromDb && projectsQuery.isSuccess && upcomingEvents && (
+            <DashboardCard
+              {...upcomingEventsCardConfig}
+              title={`Upcoming Events (${upcomingEvents?.length})`}
+            >
+              {upcomingEvents.length ? (
+                upcomingEvents.map(
+                  (event) =>
+                    event && <EventMenuItem key={event?.id} event={event} />,
+                )
+              ) : (
+                <div className="my-10 mt-auto flex items-center justify-center">
+                  <NoResults
+                    src={upcomingEventsCardConfig.noDataSrc}
+                    alt={upcomingEventsCardConfig.noDataAlt}
+                    text={upcomingEventsCardConfig.noDataText}
+                  />
+                </div>
+              )}
+            </DashboardCard>
+          )}
         </div>
 
         {/* Messages Card */}
         <div className="hidden sm:row-span-1 sm:inline-block xl:col-span-1 xl:row-span-2">
-          <DashboardCard
-            {...messagesCardConfig}
-            title={`Messages (${unreadMessages?.length})`}
-            data={messagesData}
-          />
+          {(!userFromDb || projectsQuery.isLoading) && (
+            <Skeleton className="h-64 w-full rounded" />
+          )}
+          {userFromDb && projectsQuery.isSuccess && unreadMessages && (
+            <DashboardCard
+              {...messagesCardConfig}
+              title={`Messages (${unreadMessages?.length})`}
+            >
+              {unreadMessages.length ? (
+                unreadMessages.map((message) => (
+                  <MessageMenuItem
+                    key={message.id}
+                    message={message as MessageWithData}
+                  />
+                ))
+              ) : (
+                <div className="my-10 mt-auto flex items-center justify-center">
+                  <NoResults
+                    src={messagesCardConfig.noDataSrc}
+                    alt={messagesCardConfig.noDataAlt}
+                    text={messagesCardConfig.noDataText}
+                  />
+                </div>
+              )}
+            </DashboardCard>
+          )}
         </div>
 
         {/* Create New Card */}
         <div className="sm:row-span-1">
-          <DashboardLinksCard {...createCardConfig} />
+          {!userFromDb && <Skeleton className="h-36 w-full rounded" />}
+          {userFromDb && <DashboardLinksCard {...createCardConfig} />}
         </div>
 
         {/* Payments Card */}
         <div className="hidden sm:col-span-1 sm:inline-block xl:col-span-2 xl:row-span-2">
-          <PaymentsCard agencyId={userFromDb.agencyId} />
+          {(!userFromDb || projectsQuery.isLoading) && (
+            <Skeleton className="h-64 w-full rounded xl:h-96" />
+          )}
+          {userFromDb && projectsQuery.data && (
+            <PaymentsCard projects={projectsQuery.data} />
+          )}
         </div>
 
         {/* Tasks Card */}
         <div className="hidden sm:inline-block">
-          <DashboardCard
-            {...tasksCardConfig}
-            title={`Tasks (${tasks?.length})`}
-            data={tasksData}
-          />
+          {(!userFromDb || tasksQuery.isLoading) && (
+            <Skeleton className="h-64 w-full rounded" />
+          )}
+          {userFromDb && tasksQuery.isSuccess && uncompletedTasks && (
+            <DashboardCard
+              title={`Tasks (${uncompletedTasks?.length})`}
+              {...tasksCardConfig}
+            >
+              {uncompletedTasks.length ? (
+                uncompletedTasks.map((task) => (
+                  <TaskMenuItem key={task.id} task={task} />
+                ))
+              ) : (
+                <div className="my-10 mt-auto flex items-center justify-center">
+                  <NoResults
+                    src={tasksCardConfig.noDataSrc}
+                    alt={tasksCardConfig.noDataAlt}
+                    text={tasksCardConfig.noDataText}
+                  />
+                </div>
+              )}
+            </DashboardCard>
+          )}
         </div>
 
         {/* Explore Card */}
         <div className="sm:col-span-2 xl:col-span-3">
-          <DashboardLinksCard {...exploreCardConfig} />
+          {!userFromDb && <Skeleton className="h-36 w-full rounded" />}
+          {userFromDb && <DashboardLinksCard {...exploreCardConfig} />}
         </div>
       </div>
     </>

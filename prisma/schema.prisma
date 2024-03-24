@@ -10,6 +10,9 @@ datasource db {
 model User {
   id            String         @id @default(uuid())
   email         String         @unique
+  firstName     String         @default("Vowsuite")
+  lastName      String         @default("User")
+  avatar        String?
   agencyId      String?
   agency        Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   permissions   Permission[]
@@ -23,6 +26,7 @@ model User {
 }
 
 enum Plan {
+  TRIAL
   BASIC
   PRO
   ENTERPRISE
@@ -31,7 +35,7 @@ enum Plan {
 model Agency {
   id              String    @id @default(uuid())
   name            String
-  avatar          String
+  avatar          String?
   email           String    @unique
   website         String?
   facebook        String?
@@ -40,13 +44,13 @@ model Agency {
   tiktok          String?
   youtube         String?
   vimeo           String?
-  fontPrimary     String
-  fontSecondary   String
-  colorAccent     String
-  colorBackground String
-  colorText       String
+  fontPrimary     String    @default("Georgia")
+  fontSecondary   String    @default("Helvetica")
+  colorAccent     String    @default("#ffbe98")
+  colorBackground String    @default("#f2e8da")
+  colorText       String    @default("#1c1917")
   users           User[]
-  plan            Plan
+  plan            Plan      @default(TRIAL)
   projects        Project[]
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
@@ -218,4 +222,3 @@ model Notification {
 
   @@index([userId, read])
 }
-

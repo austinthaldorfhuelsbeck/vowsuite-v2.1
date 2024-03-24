@@ -1,3 +1,4 @@
+import { type Message } from "@prisma/client";
 import { InfoIcon } from "lucide-react";
 import { Card, CardContent } from "~/components/ui/card";
 import {
@@ -6,28 +7,23 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { api } from "~/trpc/server";
+import { type ProjectWithData } from "~/types";
 
-export default async function StatsCard(props: { agencyId: string }) {
-  const projects = await api.projects.getByAgencyId({
-    agencyId: props.agencyId,
-  });
-  const leads = projects?.filter((project) => project.stage === "LEAD");
-  const unreadMessages = projects
-    ?.flatMap((project) => project.messages)
-    .filter((message) => !message.read);
-
+export default function StatsCard(props: {
+  leads: ProjectWithData[];
+  messages: Message[];
+}) {
   const stats = [
     {
       title: "New leads",
       tooltipContent:
         "Leads are potential clients who have shown interest through lead forms.",
-      value: leads?.length ?? 0,
+      value: props.leads?.length ?? 0,
     },
     {
       title: "Unread messages",
       tooltipContent: "Unread messages from your projects.",
-      value: unreadMessages?.length ?? 0,
+      value: props.messages?.length ?? 0,
     },
     {
       title: "Draft collections",

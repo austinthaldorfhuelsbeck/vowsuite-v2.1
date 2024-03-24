@@ -1,7 +1,12 @@
 import type {
   Agency,
+  Collection,
+  Contact,
+  Event,
   Message,
   Notification,
+  Payment,
+  Permission,
   Project,
   Task,
   User,
@@ -17,4 +22,25 @@ export interface UserWithData extends User {
   messages: (Message | undefined)[];
   notifications: (Notification | undefined)[];
   tasks: (Task | undefined)[];
+}
+
+export interface ProjectWithData extends Project {
+  messages: Message[];
+  tasks: Task[];
+  event: Event | null;
+  collection: Collection | null;
+  contacts: Contact[];
+  permissions: Permission[];
+  payments: Payment[];
+}
+
+export interface MessageWithData extends Message {
+  project: Project;
+  user?: User;
+  contact?: Contact;
+}
+
+export interface PaymentWithData extends Payment {
+  project: Project;
+  contact?: Contact;
 }

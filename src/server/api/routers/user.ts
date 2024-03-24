@@ -42,39 +42,36 @@ const addDataToUser = async (user: User) => {
 };
 
 export const userRouter = createTRPCRouter({
-  getByEmail: publicProcedure
+  getOrCreateByEmail: publicProcedure
     .input(z.object({ email: z.string() }))
-    .query(async ({ input, ctx }) => {
-      const user = await ctx.db.user.findUnique({
+    .mutation(async ({ input, ctx }) => {
+      // Check if user exists
+      let user = await ctx.db.user.findUnique({
         where: { email: input.email },
       });
 
-      if (!user) return undefined;
+      // If user does not exist, create user and agency
+      if (!user) {
+        user = await ctx.db.user.create({
+          data: {
+            email: input.email,
+          },
+        });
 
-      return await addDataToUser(user);
-    }),
+        const agency = await ctx.db.agency.create({
+          data: {
+            name: `${user.firstName} ${user.lastName}'s Agency`,
+            email: input.email,
+          },
+        });
 
-  createByEmail: publicProcedure
-    .input(z.object({ email: z.string() }))
-    .mutation(async ({ input, ctx }) => {
-      const user = await ctx.db.user.create({
-        data: {
-          email: input.email,
-        },
-      });
-
-      return await addDataToUser(user);
-    }),
-
-  addAgency: publicProcedure
-    .input(z.object({ userId: z.string(), agencyId: z.string() }))
-    .mutation(async ({ input, ctx }) => {
-      const user = await ctx.db.user.update({
-        where: { id: input.userId },
-        data: {
-          agencyId: input.agencyId,
-        },
-      });
+        user = await ctx.db.user.update({
+          where: { id: user.id },
+          data: {
+            agencyId: agency.id,
+          },
+        });
+      }
 
       return await addDataToUser(user);
     }),

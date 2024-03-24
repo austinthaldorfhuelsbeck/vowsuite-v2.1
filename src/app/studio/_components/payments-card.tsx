@@ -23,7 +23,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { api } from "~/trpc/server";
+import { type PaymentWithData, type ProjectWithData } from "~/types";
 
 function NotFound(props: { message?: string }) {
   return (
@@ -61,29 +61,23 @@ function SubtotalMenuItem(props: {
   );
 }
 
-async function PaymentMenuItem(props: { paymentId: string }) {
-  const payment = await api.payments.getById({ id: props.paymentId });
-
-  if (!payment) {
-    return null;
-  }
-
+function PaymentMenuItem(props: { payment: PaymentWithData }) {
   return (
-    <Link href={`/studio/payment/${payment.id}`} passHref>
+    <Link href={`/studio/payment/${props.payment.id}`} passHref>
       <div className="flex cursor-pointer justify-between p-3 transition-all ease-in-out hover:bg-secondary">
         <div className="flex flex-col space-y-1">
-          <p className="text-sm">{`$${payment.amount}`}</p>
+          <p className="text-sm">{`$${props.payment.amount}`}</p>
           <p className="text-xs text-muted-foreground">
-            {payment.project?.name ?? "No project"}
+            {props.payment.project?.name ?? "No project"}
           </p>
-          {payment.contact && (
+          {props.payment.contact && (
             <p className="text-xs text-muted-foreground">
-              {`${payment.contact.firstName} ${payment.contact.lastName}`}
+              {`${props.payment.contact.firstName} ${props.payment.contact.lastName}`}
             </p>
           )}
         </div>
         <p className="my-auto text-xs text-muted-foreground">
-          {payment.date.toLocaleDateString("en-us", {
+          {props.payment.date.toLocaleDateString("en-us", {
             year: "numeric",
             month: "short",
             day: "numeric",
@@ -94,12 +88,9 @@ async function PaymentMenuItem(props: { paymentId: string }) {
   );
 }
 
-export default async function PaymentsCard(props: { agencyId: string }) {
-  const projects = await api.projects.getByAgencyId({
-    agencyId: props.agencyId,
-  });
+export default function PaymentsCard(props: { projects: ProjectWithData[] }) {
   const paymentsCurrentMonth =
-    projects
+    props.projects
       ?.flatMap((project) => project.payments)
       .filter((payment) => payment.date.getMonth === new Date().getMonth) ?? [];
   const paymentsPaid = paymentsCurrentMonth.filter(
@@ -254,13 +245,13 @@ export default async function PaymentsCard(props: { agencyId: string }) {
                     {paymentsPaid.map((payment) => (
                       <PaymentMenuItem
                         key={payment.id}
-                        paymentId={payment.id}
+                        payment={payment as PaymentWithData}
                       />
                     ))}
                     {paymentsProcessing.map((payment) => (
                       <PaymentMenuItem
                         key={payment.id}
-                        paymentId={payment.id}
+                        payment={payment as PaymentWithData}
                       />
                     ))}
                   </CardContent>
@@ -290,7 +281,7 @@ export default async function PaymentsCard(props: { agencyId: string }) {
                     {paymentsUpcoming.map((payment) => (
                       <PaymentMenuItem
                         key={payment.id}
-                        paymentId={payment.id}
+                        payment={payment as PaymentWithData}
                       />
                     ))}
                   </CardContent>
@@ -320,12 +311,7 @@ export default async function PaymentsCard(props: { agencyId: string }) {
                     {paymentsOverdue.map((payment) => (
                       <PaymentMenuItem
                         key={payment.id}
-                        payment={payment}
-                        project={
-                          projects?.find(
-                            (project) => project.id === payment.projectId,
-                          ) ?? undefined
-                        }
+                        payment={payment as PaymentWithData}
                       />
                     ))}
                   </CardContent>

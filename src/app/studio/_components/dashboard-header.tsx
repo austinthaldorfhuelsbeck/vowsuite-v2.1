@@ -1,11 +1,11 @@
-import { type Agency } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import greeting from "~/utils/greeting";
 
 export default function DashboardHeader(props: {
   firstName: string | null;
-  agency?: Agency;
+  agencyName?: string;
+  agencyAvatar?: string;
 }) {
   return (
     <div className="flex justify-between">
@@ -31,17 +31,17 @@ export default function DashboardHeader(props: {
           </p>
         </div>
       </div>
-      {props.agency && (
+      {props.agencyAvatar && (
         <Link href="/studio/settings/agency">
           <div className="flex flex-col space-y-2">
             <Image
-              src={props.agency.avatar}
+              src={props.agencyAvatar}
               width={50}
               height={50}
               alt="Agency logo"
               className="mx-auto rounded-full"
             />
-            <p className="text-sm text-muted-foreground">{props.agency.name}</p>
+            <p className="text-sm text-muted-foreground">{props.agencyName}</p>
           </div>
         </Link>
       )}
