@@ -72,7 +72,7 @@ export const taskRouter = createTRPCRouter({
     .input(
       z.object({
         taskId: z.string(),
-        title: z.string(),
+        title: z.string().optional(),
         description: z.string().optional(),
         dueDate: z.date().optional(),
       }),

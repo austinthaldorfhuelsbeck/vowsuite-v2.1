@@ -33,6 +33,8 @@ import type { TaskWithData } from "~/types";
 import useFilterTasks from "../_hooks/useFilterTasks";
 import CreateTaskButton from "./create-task-button";
 import TaskCheckButton from "./task-check-button";
+import { TaskDatePicker } from "./task-date-picker";
+import TaskDeleteButton from "./task-delete-button";
 import { TaskNameInput } from "./task-name-input";
 
 export default function TaskTable(props: {
@@ -61,7 +63,10 @@ export default function TaskTable(props: {
         <div className="mr-auto flex">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button>Create task</Button>
+              <Button className="space-x-2">
+                <p>Create task</p>
+                <ChevronDownIcon className="my-auto h-4 w-4" />
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               {props.projects.map((project) => (
@@ -217,16 +222,25 @@ export default function TaskTable(props: {
                       />
                     </TableCell>
                     <TableCell>
-                      {task.dueDate.toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
+                      <TaskDatePicker
+                        taskId={task.id}
+                        initialDate={task.dueDate}
+                        onDateChange={(dueDate) => {
+                          setFilteredTasks((tasks) =>
+                            tasks.map((t) =>
+                              t?.id === task.id ? { ...task, dueDate } : t,
+                            ),
+                          );
+                        }}
+                      />
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-5">
                         <p>{task.project?.name}</p>
-                        <Link href={`/studio/project/${task.project?.id}`}>
+                        <Link
+                          href={`/studio/project/${task.project?.id}`}
+                          target="_blank"
+                        >
                           <ArrowUpRightFromSquareIcon className="my-auto h-4 w-4" />
                         </Link>
                       </div>
@@ -240,6 +254,16 @@ export default function TaskTable(props: {
                         <p className="m-0">{task.user?.email}</p>
                         <ChevronDownIcon className="my-auto h-4 w-4" />
                       </Button>
+                    </TableCell>
+                    <TableCell>
+                      <TaskDeleteButton
+                        taskId={task.id}
+                        onCompletedChange={(taskId) => {
+                          setFilteredTasks((tasks) =>
+                            tasks.filter((t) => t?.id !== taskId),
+                          );
+                        }}
+                      />
                     </TableCell>
                   </TableRow>
                 ),
