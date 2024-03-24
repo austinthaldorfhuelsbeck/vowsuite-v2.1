@@ -1,6 +1,5 @@
 import { currentUser } from "@clerk/nextjs";
 import NoResults from "~/components/global/no-results";
-import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,7 +8,7 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { api } from "~/trpc/server";
-import TaskTable from "../_components/taskTable";
+import TaskTable from "../_components/task-table";
 
 export default async function TasksPage() {
   const user = await currentUser();
@@ -29,7 +28,7 @@ export default async function TasksPage() {
 
   return (
     <Card className="border-none bg-transparent">
-      <CardHeader className="flex-row justify-between">
+      <CardHeader>
         <div className="flex flex-col">
           <CardTitle className="text-2xl font-bold">Task Management</CardTitle>
           <CardDescription>
@@ -37,7 +36,6 @@ export default async function TasksPage() {
             better overview.
           </CardDescription>
         </div>
-        <Button>Create task</Button>
       </CardHeader>
 
       {(!tasks || tasks.length === 0) && (
@@ -53,7 +51,11 @@ export default async function TasksPage() {
 
       {tasks && tasks.length > 0 && (
         <CardContent>
-          <TaskTable tasks={tasks} />
+          <TaskTable
+            tasks={tasks}
+            projects={userFromDb.agency.projects}
+            userId={userFromDb.id}
+          />
         </CardContent>
       )}
     </Card>

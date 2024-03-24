@@ -68,6 +68,28 @@ export const taskRouter = createTRPCRouter({
       return addDataToTask(task);
     }),
 
+  update: publicProcedure
+    .input(
+      z.object({
+        taskId: z.string(),
+        title: z.string(),
+        description: z.string(),
+        dueDate: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const task = await ctx.db.task.update({
+        where: { id: input.taskId },
+        data: {
+          title: input.title,
+          description: input.description,
+          dueDate: new Date(input.dueDate),
+        },
+      });
+
+      return addDataToTask(task);
+    }),
+
   changeUserId: publicProcedure
     .input(z.object({ taskId: z.string(), userId: z.string() }))
     .mutation(async ({ input, ctx }) => {

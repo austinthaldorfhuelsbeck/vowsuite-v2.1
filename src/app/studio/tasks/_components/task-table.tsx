@@ -1,5 +1,6 @@
 "use client";
 
+import { type Project } from "@prisma/client";
 import {
   ArrowUpRightFromSquareIcon,
   CheckIcon,
@@ -30,12 +31,16 @@ import {
 } from "~/components/ui/table";
 import type { TaskWithData } from "~/types";
 import useFilterTasks from "../_hooks/useFilterTasks";
+import CreateTaskButton from "./create-task-button";
 
 export default function TaskTable(props: {
   tasks: (TaskWithData | undefined)[];
+  projects: Project[];
+  userId: string;
 }) {
   const {
     filteredTasks,
+    setFilteredTasks,
     hideCompleted,
     toggleHideCompleted,
     showOnlyCompleted,
@@ -51,57 +56,78 @@ export default function TaskTable(props: {
   return (
     <>
       <div className="flex items-center justify-between">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="link" className="flex space-x-2">
-              <FilterIcon className="my-auto h-5 w-5" />
-              <span>Filter tasks</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuGroup>
-              <DropdownMenuItem
-                onClick={(e) => toggleShowOnlyToday(e)}
-                className={`flex items-center space-x-2 ${
-                  showOnlyToday ? "text-primary" : ""
-                }`}
-              >
-                <p>Today</p>
-                {showOnlyToday && <CheckIcon size={20} className="m-auto" />}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={(e) => toggleShowOnlyThisWeek(e)}
-                className={`flex items-center space-x-2 ${
-                  showOnlyThisWeek ? "text-primary" : ""
-                }`}
-              >
-                <p>This week</p>
-                {showOnlyThisWeek && <CheckIcon size={20} className="m-auto" />}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={(e) => toggleShowOnlyOverdue(e)}
-                className={`flex items-center space-x-2 ${
-                  showOnlyOverdue ? "text-primary" : ""
-                }`}
-              >
-                <p>Overdue</p>
-                {showOnlyOverdue && <CheckIcon size={20} className="m-auto" />}
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={(e) => toggleShowOnlyCompleted(e)}
-                className={`flex items-center space-x-2 ${
-                  showOnlyCompleted ? "text-primary" : ""
-                }`}
-              >
-                <p>Completed</p>
-                {showOnlyCompleted && (
-                  <CheckIcon size={20} className="m-auto" />
-                )}
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="mr-auto flex">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button>Create task</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {props.projects.map((project) => (
+                <CreateTaskButton
+                  key={project.id}
+                  project={project}
+                  userId={props.userId}
+                  setTasks={setFilteredTasks}
+                />
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="link" className="flex space-x-2">
+                <FilterIcon className="my-auto h-5 w-5" />
+                <span>Filter tasks</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  onClick={(e) => toggleShowOnlyToday(e)}
+                  className={`flex items-center space-x-2 ${
+                    showOnlyToday ? "text-primary" : ""
+                  }`}
+                >
+                  <p>Today</p>
+                  {showOnlyToday && <CheckIcon size={20} className="m-auto" />}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(e) => toggleShowOnlyThisWeek(e)}
+                  className={`flex items-center space-x-2 ${
+                    showOnlyThisWeek ? "text-primary" : ""
+                  }`}
+                >
+                  <p>This week</p>
+                  {showOnlyThisWeek && (
+                    <CheckIcon size={20} className="m-auto" />
+                  )}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(e) => toggleShowOnlyOverdue(e)}
+                  className={`flex items-center space-x-2 ${
+                    showOnlyOverdue ? "text-primary" : ""
+                  }`}
+                >
+                  <p>Overdue</p>
+                  {showOnlyOverdue && (
+                    <CheckIcon size={20} className="m-auto" />
+                  )}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={(e) => toggleShowOnlyCompleted(e)}
+                  className={`flex items-center space-x-2 ${
+                    showOnlyCompleted ? "text-primary" : ""
+                  }`}
+                >
+                  <p>Completed</p>
+                  {showOnlyCompleted && (
+                    <CheckIcon size={20} className="m-auto" />
+                  )}
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
         <div className="flex items-center space-x-2">
           <Switch
             checked={hideCompleted}

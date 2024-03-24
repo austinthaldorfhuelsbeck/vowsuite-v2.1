@@ -97,6 +97,7 @@ export default function useFilterTasks(props: {
 
   return {
     filteredTasks,
+    setFilteredTasks,
     hideCompleted,
     toggleHideCompleted,
     showOnlyCompleted,

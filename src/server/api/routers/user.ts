@@ -4,15 +4,40 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
 
-const addAgencyDataToUser = async (user: User) => {
+const addDataToUser = async (user: User) => {
   const agency =
     (await db.agency.findFirst({
       where: { id: user.agencyId ?? undefined },
     })) ?? undefined;
 
+  const messages =
+    (await db.message.findMany({
+      where: { userId: user.id },
+    })) ?? [];
+
+  const notifications =
+    (await db.notification.findMany({
+      where: { userId: user.id },
+    })) ?? [];
+
+  const tasks =
+    (await db.task.findMany({
+      where: { userId: user.id },
+    })) ?? [];
+
+  const projects = await db.project.findMany({
+    where: { agencyId: agency?.id },
+  });
+
   return {
     ...user,
-    agency,
+    agency: {
+      ...agency,
+      projects,
+    },
+    messages,
+    notifications,
+    tasks,
   };
 };
 
@@ -26,7 +51,7 @@ export const userRouter = createTRPCRouter({
 
       if (!user) return undefined;
 
-      return await addAgencyDataToUser(user);
+      return await addDataToUser(user);
     }),
 
   createByEmail: publicProcedure
@@ -38,7 +63,7 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      return await addAgencyDataToUser(user);
+      return await addDataToUser(user);
     }),
 
   addAgency: publicProcedure
@@ -51,6 +76,6 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      return await addAgencyDataToUser(user);
+      return await addDataToUser(user);
     }),
 });
