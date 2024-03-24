@@ -3,6 +3,8 @@
 import { type Contact, type User } from "@prisma/client";
 import {
   CalendarIcon,
+  CircleCheckIcon,
+  CircleIcon,
   CirclePlusIcon,
   ClipboardListIcon,
   EyeIcon,
@@ -42,6 +44,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Separator } from "~/components/ui/separator";
+import { Textarea } from "~/components/ui/textarea";
 import { api } from "~/trpc/react";
 import {
   type MessageWithData,
@@ -50,6 +53,7 @@ import {
 } from "~/types";
 import { DashboardCard } from "../../_components/dashboard-card";
 import { TaskMenuItem } from "../../_components/dashboard-menu-items";
+import TaskCheckButton from "../../tasks/_components/task-check-button";
 import { ProjectsSheet } from "../_components/projects-sheet";
 
 function ProjectPageHeader(props: {
@@ -222,6 +226,7 @@ function StageSelector(props: { project: ProjectWithData }) {
 
 function TasksCard(props: { tasks: TaskWithData[] }) {
   const { tasks } = props;
+  const [filteredTasks, setFilteredTasks] = useState(tasks);
   const [isOpen, setIsOpen] = useState(false);
   return (
     <Card className="rounded-sm">
@@ -239,7 +244,42 @@ function TasksCard(props: { tasks: TaskWithData[] }) {
         <CollapsibleContent className="space-y-2">
           <DashboardCard className="border-none">
             {tasks.map((task) => (
-              <TaskMenuItem key={task.id} task={task} />
+              <div className="flex items-center" key={task.id}>
+                <TaskCheckButton
+                  key={task.id}
+                  taskId={task.id}
+                  className="px-3"
+                  onCompletedChange={
+                    task.completed
+                      ? () => {
+                          setFilteredTasks((tasks) =>
+                            tasks.map((t) =>
+                              t?.id === task.id
+                                ? { ...task, completed: false }
+                                : t,
+                            ),
+                          );
+                        }
+                      : () => {
+                          setFilteredTasks((tasks) =>
+                            tasks.map((t) =>
+                              t?.id === task.id
+                                ? { ...task, completed: true }
+                                : t,
+                            ),
+                          );
+                        }
+                  }
+                >
+                  {task.completed && (
+                    <CircleCheckIcon size={20} className="m-auto" />
+                  )}
+                  {!task.completed && (
+                    <CircleIcon size={20} className="m-auto cursor-pointer" />
+                  )}
+                </TaskCheckButton>
+                <TaskMenuItem task={task} />
+              </div>
             ))}
           </DashboardCard>
         </CollapsibleContent>
@@ -266,7 +306,7 @@ function NotesCard(props: { notes: string }) {
         </CardHeader>
         <CollapsibleContent className="space-y-2">
           <CardContent>
-            <p>{notes}</p>
+            <Textarea placeholder={notes} className="min-h-36" />
           </CardContent>
         </CollapsibleContent>
       </Collapsible>
@@ -297,7 +337,7 @@ export default function ProjectPage() {
   const participants = [...project.contacts, ...agency.users];
   const messages = project.messages;
   const tasks = project.tasks.filter(
-    (task) => !task.completed,
+    (task) => task.projectId === project.id && !task.completed,
   ) as TaskWithData[];
 
   return (
@@ -307,6 +347,7 @@ export default function ProjectPage() {
       {/* Displays reversed in mobile mode with flex,
           displays in columns as screen size increases */}
       <main className="content flex flex-col-reverse md:grid md:grid-cols-2 md:space-x-10 lg:grid-cols-5">
+        {/* Messages */}
         <section className="space-y-5 md:col-span-1 lg:col-span-3">
           <Input placeholder="Type a message..." />
           <h3 className="text-sm font-light text-muted-foreground">
@@ -320,6 +361,7 @@ export default function ProjectPage() {
           ))}
         </section>
 
+        {/* Project Details */}
         <Card className="project-details mb-auto rounded-sm bg-transparent md:col-span-1 lg:col-span-2">
           <CardHeader className="flex-row items-center gap-3">
             <Avatar>
