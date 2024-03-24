@@ -1,5 +1,10 @@
-import { currentUser } from "@clerk/nextjs";
+"use client";
+
+import { useUser } from "@clerk/nextjs";
+import { useEffect } from "react";
+import { LoadingPage } from "~/components/global/loading";
 import NoResults from "~/components/global/no-results";
+import ServerError from "~/components/global/server-error";
 import {
   Card,
   CardContent,
@@ -7,24 +12,43 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { api } from "~/trpc/server";
+import { api } from "~/trpc/react";
 import TaskTable from "../_components/task-table";
 
-export default async function TasksPage() {
-  const user = await currentUser();
+export default function TasksPage() {
+  const { user: clerkUser, isLoaded: clerkUserIsLoaded } = useUser();
+  const getOrCreateByEmailMutation = api.user.getOrCreateByEmail.useMutation();
+  const email = clerkUser?.emailAddresses[0]?.emailAddress;
 
-  const userFromDb = await api.user.getByEmail({
-    email: user?.emailAddresses[0]?.emailAddress ?? "",
+  useEffect(() => {
+    if (email) getOrCreateByEmailMutation.mutate({ email });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [email]);
+
+  const userFromDb = getOrCreateByEmailMutation.data;
+
+  const tasksQuery = api.tasks.getByUserId.useQuery({
+    userId: userFromDb?.id ?? "",
   });
+  const uncompletedTasks = tasksQuery.data?.filter((task) => !task.completed);
 
-  if (!user || !userFromDb) {
-    return null;
-  }
+  if (!clerkUserIsLoaded) return <LoadingPage />;
 
-  // Fetch tasks from the server
-  const tasks = await api.tasks.getByUserId({
-    userId: userFromDb.id,
-  });
+  if (!clerkUser)
+    return (
+      <ServerError
+        code={401}
+        message="You are unauthorized to make that request."
+      />
+    );
+
+  if (getOrCreateByEmailMutation.error)
+    return (
+      <ServerError
+        code={500}
+        message="Could not load user resource. Please try again."
+      />
+    );
 
   return (
     <Card className="border-none bg-transparent">
@@ -38,7 +62,7 @@ export default async function TasksPage() {
         </div>
       </CardHeader>
 
-      {(!tasks || tasks.length === 0) && (
+      {(!uncompletedTasks || uncompletedTasks.length === 0) && (
         <CardContent>
           <NoResults
             src="/images/relaxing-at-home.svg"
@@ -49,10 +73,10 @@ export default async function TasksPage() {
         </CardContent>
       )}
 
-      {tasks && tasks.length > 0 && (
+      {uncompletedTasks && uncompletedTasks.length > 0 && userFromDb && (
         <CardContent>
           <TaskTable
-            tasks={tasks}
+            tasks={uncompletedTasks}
             projects={userFromDb.agency.projects}
             userId={userFromDb.id}
           />
