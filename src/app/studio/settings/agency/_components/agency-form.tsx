@@ -51,7 +51,7 @@ const formSchema = z.object({
 export default function AgencyForm(props: { agency: Agency }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: props.agency,
+    defaultValues: props.agency ?? undefined,
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
