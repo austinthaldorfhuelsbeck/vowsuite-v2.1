@@ -43,7 +43,13 @@ const addDataToUser = async (user: User) => {
 
 export const userRouter = createTRPCRouter({
   getOrCreateByEmail: publicProcedure
-    .input(z.object({ email: z.string() }))
+    .input(
+      z.object({
+        email: z.string(),
+        firstName: z.string().optional(),
+        lastName: z.string().optional(),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       // Check if user exists
       let user = await ctx.db.user.findUnique({
@@ -55,6 +61,8 @@ export const userRouter = createTRPCRouter({
         user = await ctx.db.user.create({
           data: {
             email: input.email,
+            firstName: input.firstName,
+            lastName: input.lastName,
           },
         });
 

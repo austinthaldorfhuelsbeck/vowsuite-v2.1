@@ -35,7 +35,12 @@ export default function Studio() {
   const email = clerkUser?.emailAddresses[0]?.emailAddress;
 
   useEffect(() => {
-    if (email) getOrCreateByEmailMutation.mutate({ email });
+    if (email)
+      getOrCreateByEmailMutation.mutate({
+        email,
+        firstName: clerkUser?.firstName ?? undefined,
+        lastName: clerkUser?.lastName ?? undefined,
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [email]);
 

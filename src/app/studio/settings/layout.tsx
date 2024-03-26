@@ -12,7 +12,7 @@ export default function SettingsLayout({
   const pathname = usePathname();
   const activeTab = pathname.split("/").pop();
   return (
-    <div className="flex flex-col space-y-3">
+    <div className="flex flex-col items-center space-y-3">
       <h1 className="text-2xl font-bold">Settings</h1>
       <Tabs defaultValue={activeTab} className="sm:w-[600px]">
         <TabsList className="grid w-full grid-cols-3">

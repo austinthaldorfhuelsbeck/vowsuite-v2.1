@@ -243,7 +243,7 @@ function TasksCard(props: { tasks: TaskWithData[] }) {
         </CardHeader>
         <CollapsibleContent className="space-y-2">
           <DashboardCard className="border-none">
-            {tasks.map((task) => (
+            {filteredTasks.map((task) => (
               <div className="flex items-center" key={task.id}>
                 <TaskCheckButton
                   key={task.id}
