@@ -1,58 +1,11 @@
-import { type Agency, type Message, type Project } from "@prisma/client";
+import { type Project } from "@prisma/client";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
 
-const addDataToMessage = async (message: Message) => {
-  const user = message.userId
-    ? await db.user.findUnique({
-        where: { id: message.userId },
-      })
-    : undefined;
-  const contact = message.contactId
-    ? await db.contact.findUnique({
-        where: { id: message.contactId },
-      })
-    : undefined;
-  const project = await db.project.findUnique({
-    where: { id: message.projectId },
-  });
-
-  return {
-    ...message,
-    user,
-    contact,
-    project,
-  };
-};
-
-const addDataToAgency = async (agency: Agency) => {
-  const users = await db.user.findMany({
-    where: { agencyId: agency.id },
-  });
-  const projects = await db.project.findMany({
-    where: { agencyId: agency.id },
-  });
-
-  return {
-    ...agency,
-    users,
-    projects,
-  };
-};
-
 const addDataToProject = async (project: Project) => {
-  const agency = await db.agency.findUnique({
-    where: { id: project.agencyId },
-  });
   const event = await db.event.findUnique({
-    where: { projectId: project.id },
-  });
-  const collection = await db.collection.findUnique({
-    where: { projectId: project.id },
-  });
-  const tasks = await db.task.findMany({
     where: { projectId: project.id },
   });
   const contacts = await db.contact.findMany({
@@ -61,19 +14,11 @@ const addDataToProject = async (project: Project) => {
   const permissions = await db.permission.findMany({
     where: { projectId: project.id },
   });
-  const payments = await db.payment.findMany({
-    where: { projectId: project.id },
-  });
 
   return {
     ...project,
-    // messages: await Promise.all(messages.map(addDataToMessage)),
     event,
     permissions,
-    // payments,
-    // agency: agency && (await addDataToAgency(agency)),
-    // collection,
-    // tasks,
     contacts,
   };
 };
