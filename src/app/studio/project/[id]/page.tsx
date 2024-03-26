@@ -14,6 +14,7 @@ import NoResults from "~/components/global/no-results";
 import { Skeleton } from "~/components/ui/skeleton";
 import MessageCard from "../_components/message-card";
 import NotesCard from "../_components/notes-card";
+import PaymentsCard from "../_components/payments-card";
 import ProjectPageHeader from "../_components/project-page-header";
 import StageSelector from "../_components/stage-selector";
 import TasksCard from "../_components/tasks-card";
@@ -39,6 +40,11 @@ export default function ProjectPage() {
     projectId: id?.toString() ?? "",
   });
   const tasks = tasksQuery.data;
+
+  const paymentsQuery = api.payments.getByProjectId.useQuery({
+    projectId: id?.toString() ?? "",
+  });
+  const payments = paymentsQuery.data;
 
   if (projectQuery.isLoading) return <LoadingPage />;
   if (projectQuery.error ?? !project)
@@ -118,7 +124,10 @@ export default function ProjectPage() {
           </CardHeader>
           <CardContent className="flex flex-col gap-5 px-3">
             <StageSelector project={project} />
+            {tasksQuery.isLoading && <Skeleton className="h-14 w-full" />}
             {tasks && <TasksCard tasks={tasks} />}
+            {paymentsQuery.isLoading && <Skeleton className="h-14 w-full" />}
+            {payments && <PaymentsCard payments={payments} />}
             <NotesCard notes={project.notes} />
           </CardContent>
         </Card>

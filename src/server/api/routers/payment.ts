@@ -1,4 +1,5 @@
 import { type Payment } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
@@ -11,6 +12,9 @@ const addDataToPayment = async (payment: Payment) => {
   const contact = await db.contact.findUnique({
     where: { id: payment.contactId ?? "" },
   });
+
+  if (!project)
+    throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
 
   return {
     ...payment,
