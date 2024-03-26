@@ -1,7 +1,6 @@
 import AnimateWrapper from "~/layouts/animate-wrapper";
 import SectionWrapper from "~/layouts/section-wrapper";
 import { visualFeaturesList } from "~/lib/constants";
-import { TabsDemo } from "./tabs";
 
 const VisualFeatures = () => {
   return (
@@ -36,22 +35,9 @@ const VisualFeatures = () => {
                     <h3 className="text-xl font-semibold">{item.title}</h3>
                     <p className="mt-3 sm:text-sm md:text-base">{item.desc}</p>
                   </div>
-                  {/* <div className="pl-8">
-                  <Image
-                    src={item.img}
-                    className="ml-auto w-full"
-                    alt={item.title}
-                    width={500}
-                    height={500}
-                  />
-                </div> */}
                 </li>
               ))}
             </ul>
-          </AnimateWrapper>
-
-          <AnimateWrapper>
-            <TabsDemo />
           </AnimateWrapper>
         </div>
       </div>

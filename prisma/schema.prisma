@@ -1,145 +1,225 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "mysql"
-    url      = env("DATABASE_URL")
-}
-
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    @@index([name])
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-    id           String         @id @default(uuid())
-    firstName    String
-    lastName     String
-    email        String         @unique
-    avatar       String?
-    agencyId     String?
-    agency       Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-    permissions  Permission[]
-    Notification Notification[]
-    createdAt    DateTime       @default(now())
-    updatedAt    DateTime       @updatedAt
+  id            String         @id @default(uuid())
+  email         String         @unique
+  firstName     String         @default("Vowsuite")
+  lastName      String         @default("User")
+  avatar        String?
+  agencyId      String?
+  agency        Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  permissions   Permission[]
+  messages      Message[]
+  notifications Notification[]
+  tasks         Task[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 
-    @@index([agencyId])
+  @@index([agencyId])
 }
 
 enum Plan {
-    BASIC
-    PRO
-    ENTERPRISE
+  TRIAL
+  BASIC
+  PRO
+  ENTERPRISE
 }
 
 model Agency {
-    id              String    @id @default(uuid())
-    name            String
-    avatar          String
-    email           String    @unique
-    website         String
-    facebook        String
-    twitter         String
-    instagram       String
-    tiktok          String
-    youtube         String
-    vimeo           String
-    fontPrimary     String
-    fontSecondary   String
-    colorAccent     String
-    colorBackground String
-    colorText       String
-    users           User[]
-    plan            Plan
-    accounts        Account[]
-    createdAt       DateTime  @default(now())
-    updatedAt       DateTime  @updatedAt
+  id              String    @id @default(uuid())
+  name            String
+  avatar          String?
+  email           String    @unique
+  website         String?
+  facebook        String?
+  twitter         String?
+  instagram       String?
+  tiktok          String?
+  youtube         String?
+  vimeo           String?
+  fontPrimary     String    @default("Georgia")
+  fontSecondary   String    @default("Helvetica")
+  colorAccent     String    @default("#ffbe98")
+  colorBackground String    @default("#f2e8da")
+  colorText       String    @default("#1c1917")
+  users           User[]
+  plan            Plan      @default(TRIAL)
+  projects        Project[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }
 
 model Contact {
-    id        String   @id @default(uuid())
-    firstName String
-    lastName  String
-    email     String   @unique
-    phone     String
-    address   String
-    city      String
-    state     String
-    zip       String
-    country   String
-    accountId String
-    account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String    @id @default(uuid())
+  firstName String
+  lastName  String
+  avatar    String?
+  email     String    @unique
+  phone     String?
+  address   String?
+  city      String?
+  state     String?
+  zip       String?
+  country   String?
+  projectId String
+  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  messages  Message[]
+  payments  Payment[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
-    @@index([accountId])
+  @@index([projectId])
 }
 
 enum Stage {
-    LEAD
-    PROSPECT
-    PROPOSAL_SENT
-    CUSTOMER
-    PARTNER
+  LEAD
+  PROSPECT
+  CLIENT
+  COMPLETED
+  ONGOING
 }
 
-model Account {
-    id            String       @id @default(uuid())
-    name          String
-    email         String       @unique
-    avatar        String?
-    eventDate     DateTime
-    eventLocation String
-    description   String
-    notes         String
-    agencyId      String
-    agency        Agency       @relation(fields: [agencyId], references: [id])
-    stage         Stage
-    contacts      Contact[]
-    permissions   Permission[]
-    createdAt     DateTime     @default(now())
-    updatedAt     DateTime     @updatedAt
+model Project {
+  id          String       @id @default(uuid())
+  name        String
+  email       String       @unique
+  avatar      String?
+  description String
+  notes       String
+  agencyId    String
+  agency      Agency       @relation(fields: [agencyId], references: [id])
+  event       Event?
+  collection  Collection?
+  stage       Stage
+  contacts    Contact[]
+  permissions Permission[]
+  messages    Message[]
+  tasks       Task[]
+  payments    Payment[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 
-    @@index([agencyId])
+  @@index([agencyId])
+}
+
+model Event {
+  id        String   @id @default(uuid())
+  name      String
+  date      DateTime
+  location  String
+  projectId String   @unique
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
+}
+
+model Collection {
+  id        String   @id @default(uuid())
+  name      String
+  projectId String   @unique
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
 }
 
 enum Role {
-    ADMIN
-    USER
-    GUEST
+  ADMIN
+  USER
+  GUEST
 }
 
 model Permission {
-    id        String   @id @default(uuid())
-    userId    String
-    accountId String
-    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
-    role      Role
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(uuid())
+  userId    String
+  projectId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  role      Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@index([userId])
-    @@index([accountId])
+  @@index([userId])
+  @@index([projectId])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contactId String?
+  contact   Contact? @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  subject   String
+  body      String   @db.Text
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([projectId])
+}
+
+model Task {
+  id          String   @id @default(uuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String   @default("New Task")
+  description String   @default("")
+  dueDate     DateTime @default(now())
+  completed   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([projectId])
+}
+
+enum Status {
+  PAID
+  PENDING
+  FAILED
+  REFUNDED
+  CANCELED
+}
+
+model Payment {
+  id        String   @id @default(uuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  contactId String?
+  contact   Contact? @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  amount    Float
+  date      DateTime
+  status    Status?
+  method    String
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
 }
 
 model Notification {
-    id        String   @id @default(uuid())
-    userId    String
-    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    message   String
-    read      Boolean  @default(false)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@index([userId, read])
+  @@index([userId, read])
 }

@@ -1,8 +1,6 @@
-import { useClerk } from "@clerk/nextjs";
-
-import { type User } from "@prisma/client";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { SignOutButton } from "@clerk/nextjs";
+import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,73 +15,73 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 
-const UserMenu = (props: { user?: Partial<User> }) => {
-  const { signOut } = useClerk();
-  const router = useRouter();
-  const onLogout = () => signOut(() => router.push("/"));
-
+const UserAvatar = (props: {
+  imageUrl: string;
+  firstName: string;
+  lastName: string;
+}) => {
   return (
-    <div className="ml-auto text-right">
-      <DropdownMenu>
-        <div>
-          <DropdownMenuTrigger>
-            <Image
-              src={props.user?.avatar ?? "/assets/user-placeholder.jpg"}
-              alt={"Profile Image"}
-              width={32}
-              height={32}
-              className="rounded-full"
-            />
-          </DropdownMenuTrigger>
-        </div>
-        <DropdownMenuContent className="mr-5 w-56">
-          <DropdownMenuLabel className="font-bold">
-            {props.user && (
-              <div className="flex space-x-3">
-                {props.user?.avatar && (
-                  <Image
-                    src={props.user.avatar}
-                    alt={"Profile Image"}
-                    width={28}
-                    height={28}
-                    className="rounded-full"
-                  />
-                )}
-                <span>
-                  {`${props.user?.firstName} ${props.user?.lastName}` ??
-                    "Vowsuite User"}
-                </span>
-              </div>
-            )}
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>Profile Settings</DropdownMenuItem>
-            <DropdownMenuItem>Agency Settings</DropdownMenuItem>
-          </DropdownMenuGroup>
-
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>Team</DropdownMenuItem>
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuSubContent>
-                  <DropdownMenuItem>Email</DropdownMenuItem>
-                  <DropdownMenuItem>Message</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>More...</DropdownMenuItem>
-                </DropdownMenuSubContent>
-              </DropdownMenuPortal>
-            </DropdownMenuSub>
-          </DropdownMenuGroup>
-
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={onLogout}>Log out</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+    <Avatar>
+      <AvatarImage src={props.imageUrl ?? undefined} alt="Profile Image" />
+      <AvatarFallback>
+        {`${props.firstName?.[0] ?? ""}${props.lastName?.[0] ?? ""}`.toUpperCase()}
+      </AvatarFallback>
+    </Avatar>
   );
 };
+
+const UserMenu = (props: {
+  imageUrl: string;
+  firstName: string;
+  lastName: string;
+}) => (
+  <DropdownMenu>
+    <DropdownMenuTrigger>
+      <UserAvatar {...props} />
+    </DropdownMenuTrigger>
+    <DropdownMenuContent className="mr-5 w-56">
+      <DropdownMenuLabel className="font-bold">
+        {props.imageUrl && (
+          <div className="flex space-x-3">
+            {props.imageUrl && <UserAvatar {...props} />}
+            <span>
+              {`${props.firstName} ${props.lastName}` ?? "Vowsuite User"}
+            </span>
+          </div>
+        )}
+      </DropdownMenuLabel>
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
+        <DropdownMenuItem>
+          <Link href="/studio/settings/profile">Profile Settings</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link href="/studio/settings/agency">Agency Settings</Link>
+        </DropdownMenuItem>
+      </DropdownMenuGroup>
+
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
+        <DropdownMenuItem>Team</DropdownMenuItem>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem>Email</DropdownMenuItem>
+              <DropdownMenuItem>Message</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>More...</DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
+      </DropdownMenuGroup>
+
+      <DropdownMenuSeparator />
+      <DropdownMenuItem>
+        <SignOutButton>Log out</SignOutButton>
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+);
 
 export default UserMenu;
