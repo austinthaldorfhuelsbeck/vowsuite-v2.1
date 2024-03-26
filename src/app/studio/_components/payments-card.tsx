@@ -1,3 +1,4 @@
+import { type Payment } from "@prisma/client";
 import {
   ArrowRightIcon,
   CircleHelpIcon,
@@ -23,7 +24,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { type PaymentWithData, type ProjectWithData } from "~/types";
+import { type PaymentWithData } from "~/types";
 
 function NotFound(props: { message?: string }) {
   return (
@@ -88,11 +89,11 @@ function PaymentMenuItem(props: { payment: PaymentWithData }) {
   );
 }
 
-export default function PaymentsCard(props: { projects: ProjectWithData[] }) {
+export default function PaymentsCard(props: { payments: Payment[] }) {
   const paymentsCurrentMonth =
-    props.projects
-      ?.flatMap((project) => project.payments)
-      .filter((payment) => payment.date.getMonth === new Date().getMonth) ?? [];
+    props.payments.filter(
+      (payment) => payment.date.getMonth === new Date().getMonth,
+    ) ?? [];
   const paymentsPaid = paymentsCurrentMonth.filter(
     (payment) => payment.status === "PAID",
   );

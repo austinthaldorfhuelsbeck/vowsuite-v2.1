@@ -31,10 +31,14 @@ const addDataToAgency = async (agency: Agency) => {
   const users = await db.user.findMany({
     where: { agencyId: agency.id },
   });
+  const projects = await db.project.findMany({
+    where: { agencyId: agency.id },
+  });
 
   return {
     ...agency,
     users,
+    projects,
   };
 };
 
@@ -47,12 +51,6 @@ const addDataToProject = async (project: Project) => {
   });
   const collection = await db.collection.findUnique({
     where: { projectId: project.id },
-  });
-  const messages = await db.message.findMany({
-    where: {
-      projectId: project.id,
-    },
-    orderBy: { createdAt: "desc" },
   });
   const tasks = await db.task.findMany({
     where: { projectId: project.id },
@@ -69,14 +67,14 @@ const addDataToProject = async (project: Project) => {
 
   return {
     ...project,
-    agency: agency && (await addDataToAgency(agency)),
+    // messages: await Promise.all(messages.map(addDataToMessage)),
     event,
-    collection,
-    messages: await Promise.all(messages.map(addDataToMessage)),
-    payments,
-    tasks,
-    contacts,
     permissions,
+    // payments,
+    // agency: agency && (await addDataToAgency(agency)),
+    // collection,
+    // tasks,
+    contacts,
   };
 };
 

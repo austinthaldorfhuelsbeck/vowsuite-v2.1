@@ -15,7 +15,7 @@ import {
   upcomingEventsCardConfig,
 } from "~/lib/constants";
 import { api } from "~/trpc/react";
-import { type MessageWithData } from "~/types";
+import { type MessageWithData, type ProjectWithData } from "~/types";
 import { DashboardCard } from "./_components/dashboard-card";
 import DashboardHeader from "./_components/dashboard-header";
 import DashboardLinksCard from "./_components/dashboard-links-card";
@@ -49,12 +49,17 @@ export default function Studio() {
   const projectsQuery = api.projects.getByAgencyId.useQuery({
     agencyId: userFromDb?.agencyId ?? "",
   });
+  const messagesQuery = api.messages.getByAgencyId.useQuery({
+    agencyId: userFromDb?.agencyId ?? "",
+  });
+  const paymentsQuery = api.payments.getByAgencyId.useQuery({
+    agencyId: userFromDb?.agencyId ?? "",
+  });
+
   const leads = projectsQuery.data?.filter(
     (project) => project.stage === "LEAD",
   );
-  const unreadMessages = projectsQuery.data
-    ?.flatMap((project) => project.messages)
-    .filter((message) => !message.read);
+  const unreadMessages = messagesQuery.data?.filter((message) => !message.read);
   const upcomingEvents = projectsQuery.data
     ?.flatMap((project) => project.event)
     .filter((event) => event?.date && event.date > new Date());
@@ -63,6 +68,7 @@ export default function Studio() {
     userId: userFromDb?.id ?? "",
   });
   const uncompletedTasks = tasksQuery.data?.filter((task) => !task.completed);
+  const payments = paymentsQuery.data;
 
   if (!clerkUserIsLoaded) return <LoadingPage />;
 
@@ -138,7 +144,9 @@ export default function Studio() {
               title={`Leads (${leads?.length})`}
             >
               {leads.length ? (
-                leads.map((lead) => <LeadMenuItem key={lead.id} lead={lead} />)
+                leads.map((lead) => (
+                  <LeadMenuItem key={lead.id} lead={lead as ProjectWithData} />
+                ))
               ) : (
                 <div className="my-10 mt-auto flex items-center justify-center">
                   <NoResults
@@ -218,12 +226,10 @@ export default function Studio() {
 
         {/* Payments Card */}
         <div className="hidden sm:col-span-1 sm:inline-block xl:col-span-2 xl:row-span-2">
-          {(!userFromDb || projectsQuery.isLoading) && (
-            <Skeleton className="h-64 w-full rounded xl:h-96" />
+          {(!userFromDb || !payments) && (
+            <Skeleton className="xl:h-128 h-64 w-full rounded xl:h-96" />
           )}
-          {userFromDb && projectsQuery.data && (
-            <PaymentsCard projects={projectsQuery.data} />
-          )}
+          {userFromDb && payments && <PaymentsCard payments={payments} />}
         </div>
 
         {/* Tasks Card */}

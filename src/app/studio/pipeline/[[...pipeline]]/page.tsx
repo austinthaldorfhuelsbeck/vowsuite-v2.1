@@ -50,8 +50,12 @@ export default function PipelinePage() {
   const projectsQuery = api.projects.getByAgencyId.useQuery({
     agencyId: userFromDb?.agencyId ?? "",
   });
+  const messagesQuery = api.messages.getByAgencyId.useQuery({
+    agencyId: userFromDb?.agencyId ?? "",
+  });
 
   const projects = projectsQuery.data;
+  const messages = messagesQuery.data;
 
   if (!clerkUserIsLoaded) return <LoadingPage />;
 
@@ -152,7 +156,10 @@ export default function PipelinePage() {
                         </TableCell>
                         <TableCell>
                           <Link href={`/studio/project/${project.id}`}>
-                            <Badge>{`${project.messages?.length} unread`}</Badge>
+                            {!messages && <Skeleton className="h-6 w-20" />}
+                            {messages && (
+                              <Badge>{`${messages.length} unread`}</Badge>
+                            )}
                           </Link>
                         </TableCell>
 

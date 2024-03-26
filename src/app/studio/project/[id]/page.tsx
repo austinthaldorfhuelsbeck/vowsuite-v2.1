@@ -9,8 +9,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { api } from "~/trpc/react";
-import { type MessageWithData, type TaskWithData } from "~/types";
 
+import NoResults from "~/components/global/no-results";
+import { Skeleton } from "~/components/ui/skeleton";
 import MessageCard from "../_components/message-card";
 import NotesCard from "../_components/notes-card";
 import ProjectPageHeader from "../_components/project-page-header";
@@ -19,16 +20,28 @@ import TasksCard from "../_components/tasks-card";
 
 export default function ProjectPage() {
   const { id } = useParams();
-  const {
-    data: project,
-    isLoading,
-    error,
-  } = api.projects.getById.useQuery({ id: id?.toString() ?? "" });
+  const projectQuery = api.projects.getById.useQuery({
+    id: id?.toString() ?? "",
+  });
+  const project = projectQuery.data;
 
-  const agency = project?.agency;
+  const agencyQuery = api.agency.getById.useQuery({
+    id: project?.agencyId ?? "",
+  });
+  const agency = agencyQuery.data;
 
-  if (isLoading) return <LoadingPage />;
-  if (error ?? !project ?? !agency)
+  const messagesQuery = api.messages.getByProjectId.useQuery({
+    projectId: id?.toString() ?? "",
+  });
+  const messages = messagesQuery.data;
+
+  const tasksQuery = api.tasks.getByProjectId.useQuery({
+    projectId: id?.toString() ?? "",
+  });
+  const tasks = tasksQuery.data;
+
+  if (projectQuery.isLoading) return <LoadingPage />;
+  if (projectQuery.error ?? !project)
     return (
       <ServerError
         code={404}
@@ -36,16 +49,17 @@ export default function ProjectPage() {
       />
     );
 
-  // Preparing participants including both users and contacts
-  const participants = [...project.contacts, ...agency.users];
-  const messages = project.messages;
-  const tasks = project.tasks.filter(
-    (task) => task.projectId === project.id && !task.completed,
-  ) as TaskWithData[];
-
   return (
     <article className="space-y-5">
-      <ProjectPageHeader project={project} participants={participants} />
+      {(projectQuery.isLoading || agencyQuery.isLoading) && (
+        <Skeleton className="h-36 w-full" />
+      )}
+      {project && agency && (
+        <ProjectPageHeader
+          project={project}
+          participants={[...project.contacts, ...agency.users]}
+        />
+      )}
 
       {/* Displays reversed in mobile mode with flex,
           displays in columns as screen size increases */}
@@ -56,21 +70,40 @@ export default function ProjectPage() {
           <h3 className="text-sm font-light text-muted-foreground">
             Recent Activity
           </h3>
-          {messages.map((message) => (
-            <MessageCard
-              key={message.id}
-              message={message as MessageWithData}
+          {messagesQuery.isLoading && (
+            <>
+              <Skeleton className="h-64 w-full" />
+              <Skeleton className="h-64 w-full" />
+              <Skeleton className="h-64 w-full" />
+            </>
+          )}
+          {(!messages || messages?.length === 0) && (
+            <NoResults
+              src={"/images/no-data.svg"}
+              alt={"Two empty clipboards"}
+              text={"No messages yet. Start the conversation!"}
             />
-          ))}
+          )}
+          {messages?.map(
+            (message) =>
+              message && <MessageCard key={message.id} message={message} />,
+          )}
         </section>
 
         {/* Project Details */}
         <Card className="project-details mb-auto rounded-sm bg-transparent md:col-span-1 lg:col-span-2">
           <CardHeader className="flex-row items-center gap-3">
-            <Avatar>
-              <AvatarImage src={agency?.avatar ?? ""} alt="Agency Logo" />
-              <AvatarFallback>{agency?.name[0]}</AvatarFallback>
-            </Avatar>
+            {agencyQuery.isLoading && (
+              <>
+                <Skeleton className="h-10 w-10 rounded-full" />
+              </>
+            )}
+            {agency && (
+              <Avatar>
+                <AvatarImage src={agency.avatar ?? ""} alt="Agency Logo" />
+                <AvatarFallback>{agency.name[0]}</AvatarFallback>
+              </Avatar>
+            )}
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
                 <LockIcon size={16} />
@@ -85,7 +118,7 @@ export default function ProjectPage() {
           </CardHeader>
           <CardContent className="flex flex-col gap-5 px-3">
             <StageSelector project={project} />
-            <TasksCard tasks={tasks} />
+            {tasks && <TasksCard tasks={tasks} />}
             <NotesCard notes={project.notes} />
           </CardContent>
         </Card>

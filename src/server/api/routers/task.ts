@@ -33,6 +33,19 @@ export const taskRouter = createTRPCRouter({
       return Promise.all(tasks.map(addDataToTask));
     }),
 
+  getByProjectId: publicProcedure
+    .input(z.object({ projectId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const tasks = await ctx.db.task.findMany({
+        where: { projectId: input.projectId },
+        orderBy: { dueDate: "asc" },
+      });
+
+      if (!tasks) return [];
+
+      return Promise.all(tasks.map(addDataToTask));
+    }),
+
   toggleCompleted: publicProcedure
     .input(z.object({ taskId: z.string() }))
     .mutation(async ({ input, ctx }) => {
