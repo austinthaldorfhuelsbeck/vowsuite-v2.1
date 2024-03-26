@@ -38,11 +38,4 @@ export default function TeamSettings() {
         message="Could not load user resource. Please try again."
       />
     );
-
-  return (
-    <div>
-      <h1>Team Settings</h1>
-      <p>Team settings page</p>
-    </div>
-  );
 }
