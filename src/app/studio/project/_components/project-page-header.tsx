@@ -21,7 +21,7 @@ export default function ProjectPageHeader(props: {
             <CardTitle className="text-xl font-bold leading-none md:text-3xl xl:text-5xl">
               {project.name}
             </CardTitle>
-            <ProjectsSheet />
+            <ProjectsSheet agencyId={project.agencyId} />
           </div>
         </CardHeader>
 

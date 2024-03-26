@@ -1,6 +1,7 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
+import Link from "next/link";
 import { useEffect } from "react";
 import { LoadingPage } from "~/components/global/loading";
 import NoResults from "~/components/global/no-results";
@@ -15,13 +16,12 @@ import {
   upcomingEventsCardConfig,
 } from "~/lib/constants";
 import { api } from "~/trpc/react";
-import { type MessageWithData, type ProjectWithData } from "~/types";
+import { type MessageWithData } from "~/types";
 import { DashboardCard } from "./_components/dashboard-card";
 import DashboardHeader from "./_components/dashboard-header";
 import DashboardLinksCard from "./_components/dashboard-links-card";
 import {
   EventMenuItem,
-  LeadMenuItem,
   MessageMenuItem,
   TaskMenuItem,
 } from "./_components/dashboard-menu-items";
@@ -144,9 +144,32 @@ export default function Studio() {
               title={`Leads (${leads?.length})`}
             >
               {leads.length ? (
-                leads.map((lead) => (
-                  <LeadMenuItem key={lead.id} lead={lead as ProjectWithData} />
-                ))
+                leads.map(
+                  (lead) =>
+                    lead && (
+                      <Link
+                        key={lead.id}
+                        href={`/studio/project/${lead.id}`}
+                        passHref
+                      >
+                        <div className="flex cursor-pointer justify-between p-3 transition-all ease-in-out hover:bg-secondary">
+                          <div className="flex flex-col space-y-1">
+                            <p className="text-sm">{lead.name}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {lead.event?.location}
+                            </p>
+                          </div>
+                          <p className="my-auto text-xs text-muted-foreground">
+                            {lead.event?.date.toLocaleDateString("en-us", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </p>
+                        </div>
+                      </Link>
+                    ),
+                )
               ) : (
                 <div className="my-10 mt-auto flex items-center justify-center">
                   <NoResults

@@ -9,9 +9,10 @@ const addDataToPayment = async (payment: Payment) => {
   const project = await db.project.findUnique({
     where: { id: payment.projectId },
   });
-  const contact = await db.contact.findUnique({
-    where: { id: payment.contactId ?? "" },
-  });
+  const contact =
+    (await db.contact.findUnique({
+      where: { id: payment.contactId ?? "" },
+    })) ?? undefined;
 
   if (!project)
     throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });

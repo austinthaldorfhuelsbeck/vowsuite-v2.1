@@ -20,6 +20,7 @@ export default function PaymentsCard(props: {
 }) {
   const { payments } = props;
   const [isOpen, setIsOpen] = useState(false);
+
   return (
     <Card className="rounded-sm">
       <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2">

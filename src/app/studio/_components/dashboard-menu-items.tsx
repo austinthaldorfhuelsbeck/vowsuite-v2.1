@@ -109,18 +109,19 @@ export function TaskMenuItem(props: { task: TaskWithData }) {
 }
 
 export function PaymentMenuItem(props: { payment: PaymentWithData }) {
+  const { payment } = props;
   return (
     <Link
-      href={`/studio/payments?paymentId=${props.payment.id}`}
+      href={`/studio/payments?paymentId=${payment.id}`}
       passHref
       className="w-full"
     >
       <div className="flex cursor-pointer justify-between p-3 transition-all ease-in-out hover:bg-secondary">
         <div className="flex flex-col space-y-1">
-          <p className="text-sm">{`$${props.payment.amount}`}</p>
+          <p className="text-sm">{`$${payment.amount}`}</p>
         </div>
         <p className="my-auto text-xs text-muted-foreground">
-          {props.payment.date.toLocaleDateString("en-us", {
+          {payment.date.toLocaleDateString("en-us", {
             year: "numeric",
             month: "short",
             day: "numeric",
