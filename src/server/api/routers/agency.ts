@@ -10,7 +10,7 @@ const addDataToAgency = async (agency: Agency) => {
   });
 
   const users = await db.user.findMany({
-    where: { agencyId: agency.id },
+    where: { permission: { agencyId: agency.id } },
   });
 
   return {

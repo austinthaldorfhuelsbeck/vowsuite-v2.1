@@ -48,14 +48,10 @@ export default function PipelinePage() {
   const userFromDb = getOrCreateByEmailMutation.data;
 
   const projectsQuery = api.projects.getByAgencyId.useQuery({
-    agencyId: userFromDb?.agencyId ?? "",
-  });
-  const messagesQuery = api.messages.getByAgencyId.useQuery({
-    agencyId: userFromDb?.agencyId ?? "",
+    agencyId: userFromDb?.permission?.agencyId ?? "",
   });
 
   const projects = projectsQuery.data;
-  const messages = messagesQuery.data;
 
   if (!clerkUserIsLoaded) return <LoadingPage />;
 
@@ -156,9 +152,11 @@ export default function PipelinePage() {
                         </TableCell>
                         <TableCell>
                           <Link href={`/studio/project/${project.id}`}>
-                            {!messages && <Skeleton className="h-6 w-20" />}
-                            {messages && (
-                              <Badge>{`${messages.length} unread`}</Badge>
+                            {!project.messages && (
+                              <Skeleton className="h-6 w-20" />
+                            )}
+                            {project.messages && (
+                              <Badge>{`${project.messages.filter((message) => !message.read).length} unread`}</Badge>
                             )}
                           </Link>
                         </TableCell>

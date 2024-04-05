@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import { ArrowDownAZIcon, ArrowUpAzIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
@@ -24,7 +24,7 @@ export function ProjectsSheet(props: { agencyId: string }) {
 
   const [filteredProjects, setFilteredProjects] = useState(projects);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const toggleSortDirection = () =>
     setSortDirection(sortDirection === "asc" ? "desc" : "asc");
 
@@ -32,7 +32,7 @@ export function ProjectsSheet(props: { agencyId: string }) {
     if (projects) {
       setFilteredProjects(
         projects.slice().sort((a, b) => {
-          if (sortDirection === "desc") {
+          if (sortDirection === "asc") {
             return a.name.localeCompare(b.name);
           } else {
             return b.name.localeCompare(a.name);
@@ -66,17 +66,12 @@ export function ProjectsSheet(props: { agencyId: string }) {
               onClick={toggleSortDirection}
               className="p-2"
             >
-              <>
-                <p className="text-xs font-extralight capitalize">
-                  {sortDirection}
-                </p>
+              {
                 {
-                  {
-                    asc: <ChevronUpIcon size={20} />,
-                    desc: <ChevronDownIcon size={20} />,
-                  }[sortDirection]
-                }
-              </>
+                  desc: <ArrowUpAzIcon size={20} />,
+                  asc: <ArrowDownAZIcon size={20} />,
+                }[sortDirection]
+              }
             </Button>
           </SheetDescription>
         </SheetHeader>

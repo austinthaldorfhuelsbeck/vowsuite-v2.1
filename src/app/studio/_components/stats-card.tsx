@@ -1,4 +1,4 @@
-import { type Message } from "@prisma/client";
+import { type Message, type Payment } from "@prisma/client";
 import { InfoIcon } from "lucide-react";
 import { Card, CardContent } from "~/components/ui/card";
 import {
@@ -10,15 +10,18 @@ import {
 import { type ProjectWithData } from "~/types";
 
 export default function StatsCard(props: {
-  leads: ProjectWithData[];
+  projects: ProjectWithData[];
   messages: Message[];
+  payments: Payment[];
 }) {
   const stats = [
     {
       title: "New leads",
       tooltipContent:
         "Leads are potential clients who have shown interest through lead forms.",
-      value: props.leads?.length ?? 0,
+      value:
+        props.projects.filter((project) => project.stage === "LEAD")?.length ??
+        0,
     },
     {
       title: "Unread messages",
@@ -29,14 +32,21 @@ export default function StatsCard(props: {
       title: "Draft collections",
       tooltipContent:
         "Collections that you are still working on and haven't published yet.",
-      value: 0,
+      value: props.projects.filter(
+        (project) => project.collection && !project.collection.published,
+      ).length,
     },
     {
       title: `${new Date().getFullYear()} bookings`,
       isCurrency: true,
       tooltipContent:
         "Total invoiced amount of all projects converted to booked status this year. Includes taxes and discounts.",
-      value: 0,
+      value: props.payments
+        .filter(
+          (payment) =>
+            payment.createdAt.getFullYear() === new Date().getFullYear(),
+        )
+        .reduce((acc, payment) => acc + payment.amount, 0),
     },
   ];
 

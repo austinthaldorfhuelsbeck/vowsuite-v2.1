@@ -5,9 +5,9 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
 
 const addDataToUser = async (user: User) => {
-  const agency =
-    (await db.agency.findFirst({
-      where: { id: user.agencyId ?? undefined },
+  const permission =
+    (await db.permission.findUnique({
+      where: { userId: user.id },
     })) ?? undefined;
 
   const messages =
@@ -25,16 +25,9 @@ const addDataToUser = async (user: User) => {
       where: { userId: user.id },
     })) ?? [];
 
-  const projects = await db.project.findMany({
-    where: { agencyId: agency?.id },
-  });
-
   return {
     ...user,
-    agency: {
-      ...agency,
-      projects,
-    },
+    permission,
     messages,
     notifications,
     tasks,
@@ -73,10 +66,11 @@ export const userRouter = createTRPCRouter({
           },
         });
 
-        user = await ctx.db.user.update({
-          where: { id: user.id },
+        await ctx.db.permission.create({
           data: {
+            userId: user.id,
             agencyId: agency.id,
+            role: "ADMIN",
           },
         });
       }

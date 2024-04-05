@@ -11,15 +11,19 @@ const addDataToProject = async (project: Project) => {
   const contacts = await db.contact.findMany({
     where: { projectId: project.id },
   });
-  const permissions = await db.permission.findMany({
+  const collection = await db.collection.findUnique({
+    where: { projectId: project.id },
+  });
+  const messages = await db.message.findMany({
     where: { projectId: project.id },
   });
 
   return {
     ...project,
     event,
-    permissions,
     contacts,
+    collection,
+    messages,
   };
 };
 
@@ -41,6 +45,7 @@ export const projectRouter = createTRPCRouter({
     .query(async ({ input, ctx }) => {
       const projects = await ctx.db.project.findMany({
         where: { agencyId: input.agencyId },
+        orderBy: { name: "asc" },
       });
 
       if (!projects) return undefined;

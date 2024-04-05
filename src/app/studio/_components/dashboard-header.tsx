@@ -31,20 +31,19 @@ export default function DashboardHeader(props: {
           </p>
         </div>
       </div>
-      {props.agencyAvatar && (
-        <Link href="/studio/settings/agency">
-          <div className="flex flex-col space-y-2">
-            <Image
-              src={props.agencyAvatar}
-              width={50}
-              height={50}
-              alt="Agency logo"
-              className="mx-auto rounded-full"
-            />
-            <p className="text-sm text-muted-foreground">{props.agencyName}</p>
-          </div>
-        </Link>
-      )}
+
+      <Link href="/studio/settings/agency">
+        <div className="flex flex-col space-y-2">
+          <Image
+            src={props.agencyAvatar ?? "/assets/user-placeholder.jpg"}
+            width={50}
+            height={50}
+            alt="Agency logo"
+            className="mx-auto rounded-full"
+          />
+          <p className="text-sm text-muted-foreground">{props.agencyName}</p>
+        </div>
+      </Link>
     </div>
   );
 }

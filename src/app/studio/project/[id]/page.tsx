@@ -128,7 +128,7 @@ export default function ProjectPage() {
             {tasks && <TasksCard tasks={tasks} />}
             {paymentsQuery.isLoading && <Skeleton className="h-14 w-full" />}
             {payments && <PaymentsCard payments={payments} />}
-            <NotesCard notes={project.notes} />
+            <NotesCard notes={project.notes ?? ""} />
           </CardContent>
         </Card>
       </main>

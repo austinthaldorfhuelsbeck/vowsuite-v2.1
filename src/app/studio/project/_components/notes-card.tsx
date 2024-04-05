@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { ClipboardListIcon, MinusIcon, PlusIcon } from "lucide-react";
+import { MinusIcon, PencilLineIcon, PlusIcon } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import {
@@ -19,7 +19,7 @@ export default function NotesCard(props: { notes: string }) {
     <Card className="rounded-sm">
       <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2">
         <CardHeader className="flex-row items-center gap-3 p-3 text-primary">
-          <ClipboardListIcon size={24} />
+          <PencilLineIcon size={24} />
           <CardTitle className="text-md mr-auto font-semibold">Notes</CardTitle>
           <CollapsibleTrigger
             asChild

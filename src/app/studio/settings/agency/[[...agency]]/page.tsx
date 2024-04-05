@@ -1,7 +1,6 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { type Agency } from "@prisma/client";
 import { useEffect } from "react";
 import { LoadingPage } from "~/components/global/loading";
 import ServerError from "~/components/global/server-error";
@@ -23,6 +22,11 @@ export default function AgencySettings() {
     | UserWithData
     | undefined;
 
+  const agencyQuery = api.agency.getById.useQuery({
+    id: userFromDb?.permission?.agencyId ?? "",
+  });
+  const agency = agencyQuery.data;
+
   if (!clerkUserIsLoaded || !userFromDb) return <LoadingPage />;
 
   if (!clerkUser)
@@ -41,5 +45,5 @@ export default function AgencySettings() {
       />
     );
 
-  return <AgencyForm agency={userFromDb.agency as Agency} />;
+  return agency && <AgencyForm agency={agency} />;
 }

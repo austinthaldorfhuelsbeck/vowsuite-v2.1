@@ -13,16 +13,14 @@ model User {
   firstName     String         @default("Vowsuite")
   lastName      String         @default("User")
   avatar        String?
-  agencyId      String?
-  agency        Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-  permissions   Permission[]
+  permission    Permission?
   messages      Message[]
   notifications Notification[]
   tasks         Task[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
-  @@index([agencyId])
+  @@index([email])
 }
 
 enum Plan {
@@ -33,10 +31,10 @@ enum Plan {
 }
 
 model Agency {
-  id              String    @id @default(uuid())
+  id              String       @id @default(uuid())
   name            String
   avatar          String?
-  email           String    @unique
+  email           String       @unique
   website         String?
   facebook        String?
   twitter         String?
@@ -44,16 +42,16 @@ model Agency {
   tiktok          String?
   youtube         String?
   vimeo           String?
-  fontPrimary     String    @default("Georgia")
-  fontSecondary   String    @default("Helvetica")
-  colorAccent     String    @default("#ffbe98")
-  colorBackground String    @default("#f2e8da")
-  colorText       String    @default("#1c1917")
-  users           User[]
-  plan            Plan      @default(TRIAL)
+  fontPrimary     String       @default("Georgia")
+  fontSecondary   String       @default("Helvetica")
+  colorAccent     String       @default("#ffbe98")
+  colorBackground String       @default("#f2e8da")
+  colorText       String       @default("#1c1917")
+  plan            Plan         @default(TRIAL)
   projects        Project[]
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  permissions     Permission[]
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 }
 
 model Contact {
@@ -87,39 +85,45 @@ enum Stage {
 }
 
 model Project {
-  id          String       @id @default(uuid())
+  id          String      @id @default(uuid())
   name        String
-  email       String       @unique
   avatar      String?
   description String
-  notes       String
+  notes       String?
   agencyId    String
-  agency      Agency       @relation(fields: [agencyId], references: [id])
+  agency      Agency      @relation(fields: [agencyId], references: [id])
   event       Event?
   collection  Collection?
   stage       Stage
   contacts    Contact[]
-  permissions Permission[]
   messages    Message[]
   tasks       Task[]
   payments    Payment[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
   @@index([agencyId])
 }
 
 model Event {
-  id        String   @id @default(uuid())
-  name      String
-  date      DateTime
-  location  String
-  projectId String   @unique
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(uuid())
+  name        String
+  date        DateTime
+  location    String
+  description String?
+  projectId   String   @unique
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@index([projectId])
+}
+
+enum Type {
+  IMAGE
+  VIDEO
+  AUDIO
+  MULTI
 }
 
 model Collection {
@@ -127,6 +131,9 @@ model Collection {
   name      String
   projectId String   @unique
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  mediaType Type
+  published Boolean  @default(false)
+  views     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -141,16 +148,16 @@ enum Role {
 
 model Permission {
   id        String   @id @default(uuid())
-  userId    String
-  projectId String
+  userId    String   @unique
+  agencyId  String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  agency    Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   role      Role
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([userId])
-  @@index([projectId])
+  @@index([agencyId])
 }
 
 model Message {
@@ -204,7 +211,7 @@ model Payment {
   amount    Float
   date      DateTime
   status    Status?
-  method    String
+  method    String?
   notes     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

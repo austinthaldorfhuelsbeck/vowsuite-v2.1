@@ -46,21 +46,24 @@ export default function Studio() {
 
   const userFromDb = getOrCreateByEmailMutation.data;
 
+  const agencyQuery = api.agency.getById.useQuery({
+    id: userFromDb?.permission?.agencyId ?? "",
+  });
   const projectsQuery = api.projects.getByAgencyId.useQuery({
-    agencyId: userFromDb?.agencyId ?? "",
+    agencyId: userFromDb?.permission?.agencyId ?? "",
   });
   const messagesQuery = api.messages.getByAgencyId.useQuery({
-    agencyId: userFromDb?.agencyId ?? "",
+    agencyId: userFromDb?.permission?.agencyId ?? "",
   });
   const paymentsQuery = api.payments.getByAgencyId.useQuery({
-    agencyId: userFromDb?.agencyId ?? "",
+    agencyId: userFromDb?.permission?.agencyId ?? "",
   });
 
-  const leads = projectsQuery.data?.filter(
-    (project) => project.stage === "LEAD",
-  );
+  const agency = agencyQuery.data;
+  const projects = projectsQuery.data;
+  const leads = projects?.filter((project) => project.stage === "LEAD");
   const unreadMessages = messagesQuery.data?.filter((message) => !message.read);
-  const upcomingEvents = projectsQuery.data
+  const upcomingEvents = projects
     ?.flatMap((project) => project.event)
     .filter((event) => event?.date && event.date > new Date());
 
@@ -96,14 +99,14 @@ export default function Studio() {
     <>
       <div className="flex flex-col gap-5 sm:grid sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
         <div className="sm:col-span-2 xl:col-span-3">
-          {userFromDb && (
+          {userFromDb && agency && (
             <DashboardHeader
               firstName={userFromDb.firstName}
-              agencyName={userFromDb.agency?.name}
-              agencyAvatar={userFromDb.agency?.avatar ?? undefined}
+              agencyName={agency.name}
+              agencyAvatar={agency.avatar ?? undefined}
             />
           )}
-          {!userFromDb && (
+          {(!userFromDb || !agency) && (
             <div className="flex items-center gap-3">
               <Skeleton className="ml-1 mr-4 h-16 w-16 rounded" />
               <div className="space-y-2">
@@ -128,9 +131,18 @@ export default function Studio() {
           {(!userFromDb || projectsQuery.isLoading) && (
             <Skeleton className="h-28 w-full rounded" />
           )}
-          {userFromDb && projectsQuery.isSuccess && leads && unreadMessages && (
-            <StatsCard leads={leads} messages={unreadMessages} />
-          )}
+          {userFromDb &&
+            projectsQuery.isSuccess &&
+            leads &&
+            unreadMessages &&
+            payments &&
+            projects && (
+              <StatsCard
+                messages={unreadMessages}
+                payments={payments}
+                projects={projects}
+              />
+            )}
         </div>
 
         {/* Leads Card */}

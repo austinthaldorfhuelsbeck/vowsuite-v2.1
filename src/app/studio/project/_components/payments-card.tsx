@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { ClipboardListIcon, MinusIcon, PlusIcon } from "lucide-react";
+import { CircleDollarSignIcon, MinusIcon, PlusIcon } from "lucide-react";
 
 import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 import {
@@ -25,7 +25,7 @@ export default function PaymentsCard(props: {
     <Card className="rounded-sm">
       <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2">
         <CardHeader className="flex-row items-center justify-between gap-3 p-3 text-primary">
-          <ClipboardListIcon size={24} />
+          <CircleDollarSignIcon size={24} />
           <CardTitle className="text-md mr-auto font-semibold">{`Payments (${payments.length})`}</CardTitle>
           <CollapsibleTrigger
             asChild

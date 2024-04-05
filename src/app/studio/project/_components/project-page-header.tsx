@@ -1,12 +1,13 @@
 "use client";
 
 import { type Contact, type User } from "@prisma/client";
-import { CalendarIcon, CirclePlusIcon, ImagesIcon } from "lucide-react";
+import { CirclePlusIcon, ImagesIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { type ProjectWithData } from "~/types";
 import { ProjectsSheet } from "./projects-sheet";
+import ScheduleDialog from "./schedule-dialog";
 
 export default function ProjectPageHeader(props: {
   project: ProjectWithData;
@@ -77,10 +78,7 @@ export default function ProjectPageHeader(props: {
         </aside>
 
         <aside className="flex items-center space-x-3">
-          <Button variant="ghost" className="flex space-x-2">
-            <CalendarIcon size={16} />
-            <span className="hidden sm:inline-block">Schedule</span>
-          </Button>
+          <ScheduleDialog event={project.event ?? undefined} />
           <Button className="flex space-x-2">
             <ImagesIcon size={16} />
             <span>Collection</span>
