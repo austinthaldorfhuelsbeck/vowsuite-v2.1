@@ -74,7 +74,6 @@ export default function Studio() {
   const payments = paymentsQuery.data;
 
   if (!clerkUserIsLoaded) return <LoadingPage />;
-
   if (!clerkUser)
     return (
       <ServerError
@@ -82,7 +81,6 @@ export default function Studio() {
         message="You are unauthorized to make that request."
       />
     );
-
   if (getOrCreateByEmailMutation.error)
     return (
       <ServerError

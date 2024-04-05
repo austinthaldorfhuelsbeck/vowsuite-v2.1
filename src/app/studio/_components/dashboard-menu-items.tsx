@@ -32,7 +32,7 @@ export async function LeadMenuItem(props: { lead: ProjectWithData }) {
 
 export function EventMenuItem(props: { event: Event }) {
   return (
-    <Link href={`/studio/event/${props.event.id}`} passHref>
+    <Link href={`/studio/project/${props.event.projectId}`} passHref>
       <div className="border-1 mx-3 my-2 flex cursor-pointer justify-between rounded border transition-all ease-in-out hover:bg-secondary">
         <div className="mr-3 flex flex-col items-center rounded-l bg-primary px-3 py-2 text-primary-foreground">
           <p className="text-xl font-bold">{props.event.date.getDate()}</p>

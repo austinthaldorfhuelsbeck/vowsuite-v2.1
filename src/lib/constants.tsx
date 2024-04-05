@@ -228,8 +228,7 @@ export const studioNavigation: {
 export const leadsCardConfig = {
   tooltipContent: "Potential clients who have shown interest.",
   noDataSrc: "/images/well-done.svg",
-  noDataAlt:
-    "Relaxing with balloons, leaning on an empty notifications window",
+  noDataAlt: "Relaxing with balloons, leaning on an empty notifications window",
   noDataText: "You've handled everything. Great job! 🎉",
   footerLink: "/studio/pipeline",
   footerText: "Go to pipeline",

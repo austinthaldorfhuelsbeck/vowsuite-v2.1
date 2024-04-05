@@ -1,6 +1,6 @@
 "use client";
 
-import { LockIcon } from "lucide-react";
+import { EllipsisVerticalIcon, LockIcon, Trash2Icon } from "lucide-react";
 
 import { useParams } from "next/navigation";
 import { LoadingPage } from "~/components/global/loading";
@@ -11,6 +11,12 @@ import { Input } from "~/components/ui/input";
 import { api } from "~/trpc/react";
 
 import NoResults from "~/components/global/no-results";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 import { Skeleton } from "~/components/ui/skeleton";
 import MessageCard from "../_components/message-card";
 import NotesCard from "../_components/notes-card";
@@ -121,6 +127,17 @@ export default function ProjectPage() {
                 Private place for you and your team to manage this project.
               </p>
             </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <EllipsisVerticalIcon size={24} className="cursor-pointer" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem className="gap-2 text-red-500">
+                  <Trash2Icon size={16} />
+                  <span>Delete Project</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </CardHeader>
           <CardContent className="flex flex-col gap-5 px-3">
             <StageSelector project={project} />

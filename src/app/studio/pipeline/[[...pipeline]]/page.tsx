@@ -186,7 +186,7 @@ export default function PipelinePage() {
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem className="text-red-500">
                                   <Trash2Icon className="mr-2 h-4 w-4" />
-                                  <span>Delete</span>
+                                  <span>Delete Project</span>
                                 </DropdownMenuItem>
                               </DropdownMenuGroup>
                             </DropdownMenuContent>
