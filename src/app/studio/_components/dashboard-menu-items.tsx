@@ -57,7 +57,7 @@ export function EventMenuItem(props: { event: Event }) {
 
 export function MessageMenuItem(props: { message: MessageWithData }) {
   return (
-    <Link href={`/studio/message/${props.message.id}`} passHref>
+    <Link href={`/studio/project/${props.message.projectId}`} passHref>
       <div className="flex cursor-pointer justify-between p-3 transition-all ease-in-out hover:bg-secondary">
         <Avatar className="mr-3">
           <AvatarImage
